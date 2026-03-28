@@ -1,80 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - AI Disaster Response System</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } 
-        else if (window.matchMedia('(prefers-color-scheme: light)').matches) { document.documentElement.setAttribute('data-theme', 'light'); }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — AI Disaster Response System</title>
+  <meta name="description" content="Create your account to access the AI Disaster Response Coordination System.">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Anti-FOUC: Apply theme before paint
+    (function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();
+  </script>
 </head>
 <body>
-    <div id="toast-container" class="toast-container"></div>
-    <button class="theme-toggle-btn" onclick="toggleTheme()">
-        <script>document.write(document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️')</script>
-    </button>
-    
-    <div class="auth-wrapper">
-        <div class="glass-panel auth-card">
-            <h2 style="text-align: center; color: var(--primary);">Secure Registration</h2>
-            <p style="text-align: center; margin-bottom: 2rem;">Join the Disaster Response Network</p>
-            
-            <form id="register-form">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="name" required placeholder="John Doe">
-                </div>
-                
-                <div class="grid grid-cols-2">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="email" required placeholder="john@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" id="phone" required placeholder="+1 234 567 8900">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Home Address</label>
-                    <textarea id="address" required placeholder="123 Main St, City, Country" style="min-height: 80px;"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Emergency Contact (Family Member)</label>
-                    <input type="tel" id="emergency-contact" required placeholder="+1 098 765 4321">
-                </div>
-                
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="password" required placeholder="••••••••">
-                </div>
-                
-                <div class="form-group">
-                    <label>Verify Phone or Email</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="otp" required placeholder="Enter 4-digit OTP" style="flex: 1;">
-                        <button type="button" class="btn btn-outline" onclick="sendOTP()">Send OTP</button>
-                    </div>
-                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">We will simulate sending a code to your provided email/phone.</small>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Register Account</button>
-            </form>
-            
-            <p style="text-align: center; margin-top: 1.5rem;">
-                Already have an account? <a href="login.html">Login here</a>
-            </p>
-            <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
-                <a href="admin.html" style="color: var(--danger); font-size: 0.875rem;">Are you a Responder / Admin? Click here</a>
-            </div>
-        </div>
-    </div>
+  <div class="mesh-bg"></div>
+  <div id="toast-container"></div>
 
-    <script src="script.js"></script>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+
+  <div class="auth-page">
+    <div class="auth-container">
+
+      <!-- Brand Panel -->
+      <div class="auth-brand">
+        <div class="auth-brand-icon">🌍</div>
+        <h2>AI Disaster Response</h2>
+        <p>Join the national emergency response network. Get alerts, request help, and report incidents.</p>
+        <ul class="auth-features">
+          <li>Instant SOS emergency button</li>
+          <li>Real-time disaster alerts</li>
+          <li>Incident reporting system</li>
+          <li>AI-powered threat prediction</li>
+          <li>Credit-based accountability</li>
+        </ul>
+      </div>
+
+      <!-- Form Panel -->
+      <div class="auth-form-side">
+        <h2 style="margin-bottom:0.25rem">Create Account</h2>
+        <p style="margin-bottom:1.5rem; font-size:0.875rem">Secure registration for the national response network</p>
+
+        <!-- Wizard Progress -->
+        <div class="wizard-steps">
+          <div class="wizard-step-item active" id="wstep-1">
+            <div class="wizard-step-circle">1</div>
+            <div class="wizard-step-label">Personal Info</div>
+          </div>
+          <div class="wizard-step-line" id="wline-1"></div>
+          <div class="wizard-step-item" id="wstep-2">
+            <div class="wizard-step-circle">2</div>
+            <div class="wizard-step-label">Verification</div>
+          </div>
+        </div>
+
+        <form id="register-form" onsubmit="return false;">
+
+          <!-- Step 1: Personal Info -->
+          <div class="wizard-step-content active" id="step-1">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="reg-name" class="form-control" placeholder="John Doe" required>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="reg-email" class="form-control" placeholder="john@example.com" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98765 43210" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Residential Address</label>
+              <textarea id="reg-address" class="form-control" placeholder="Full home address" style="min-height:80px" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emergency Contact (Family Member Phone)</label>
+              <input type="tel" id="reg-emcontact" class="form-control" placeholder="+91 87654 32100" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="input-icon-wrapper">
+                <input type="password" id="reg-password" class="form-control" placeholder="Min 8 characters" required oninput="checkPasswordStrength(this.value)">
+                <button type="button" class="input-eye-btn" id="reg-eye" onclick="togglePassword('reg-password','reg-eye')">👁️</button>
+              </div>
+              <div class="strength-bar"><div class="strength-bar-fill strength-0" id="strength-fill"></div></div>
+              <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                <small class="form-hint">Use uppercase, numbers & symbols</small>
+                <small id="strength-label" style="font-weight:600"></small>
+              </div>
+            </div>
+
+            <!-- OTP Method -->
+            <div class="form-group">
+              <label class="form-label">Verify Via</label>
+              <div style="display:flex; gap:8px; margin-bottom:10px;">
+                <button type="button" class="type-chip otp-method-chip selected" data-method="phone" onclick="selectOTPMethod('phone')">📱 Phone</button>
+                <button type="button" class="type-chip otp-method-chip" data-method="email" onclick="selectOTPMethod('email')">📧 Email</button>
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-block" onclick="sendOTP()">
+                Send OTP
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: OTP Verification -->
+          <div class="wizard-step-content" id="step-2" style="display:none">
+            <div style="text-align:center; margin-bottom:1.5rem;">
+              <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔐</div>
+              <h3>Enter Verification Code</h3>
+              <p style="font-size:0.875rem; margin-top:0.25rem;">Enter the 4-digit code sent to your phone/email</p>
+            </div>
+
+            <div class="otp-inputs" style="margin-bottom:1.5rem;">
+              <input type="text" class="otp-input" id="otp-1" maxlength="1" inputmode="numeric"
+                oninput="handleOTPInput(this,1)" onkeydown="handleOTPKeydown(this,1,event)">
+              <input type="text" class="otp-input" id="otp-2" maxlength="1" inputmode="numeric"
+                oninput="handleOTPInput(this,2)" onkeydown="handleOTPKeydown(this,2,event)">
+              <input type="text" class="otp-input" id="otp-3" maxlength="1" inputmode="numeric"
+                oninput="handleOTPInput(this,3)" onkeydown="handleOTPKeydown(this,3,event)">
+              <input type="text" class="otp-input" id="otp-4" maxlength="1" inputmode="numeric"
+                oninput="handleOTPInput(this,4)" onkeydown="handleOTPKeydown(this,4,event)">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" onclick="handleRegister(event)">
+              Create My Account
+            </button>
+            <button type="button" class="btn btn-ghost btn-block" style="margin-top:8px" onclick="goToStep(1)">
+              ← Go Back
+            </button>
+          </div>
+        </form>
+
+        <div class="auth-divider">or</div>
+        <div class="auth-footer-links">
+          Already registered? <a href="login.html">Sign in here</a>
+          <br><br>
+          <a href="admin.html" style="color:var(--danger); font-size:0.8rem;">🔒 Gov / Responder Access →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // wizard content visibility
+    function selectOTPMethod(m) {
+      document.querySelectorAll('.otp-method-chip').forEach(c => c.classList.remove('selected'));
+      document.querySelector(`[data-method="${m}"]`)?.classList.add('selected');
+    }
+    // Override goToStep to handle display:none
+    const _goToStep = goToStep;
+    goToStep = function(step) {
+      _goToStep(step);
+      document.querySelectorAll('.wizard-step-content').forEach(el => el.style.display = 'none');
+      const target = document.getElementById(`step-${step}`);
+      if (target) target.style.display = 'block';
+    };
+    // Override wstep classes
+    const origGTS = goToStep;
+    goToStep = function(step) {
+      origGTS(step);
+      [1,2].forEach(i => {
+        const item = document.getElementById(`wstep-${i}`);
+        if(!item) return;
+        item.classList.remove('active','done');
+        if(i < step) item.classList.add('done');
+        if(i === step) item.classList.add('active');
+      });
+      const line = document.getElementById('wline-1');
+      if(line) line.classList.toggle('done', step > 1);
+    };
+  </script>
 </body>
 </html>

@@ -1,264 +1,298 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - AI Disaster Response System</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } 
-        else if (window.matchMedia('(prefers-color-scheme: light)').matches) { document.documentElement.setAttribute('data-theme', 'light'); }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission Control — AI Disaster Response Admin</title>
+  <meta name="description" content="Government admin panel for the AI Disaster Response Coordination System.">
+  <link rel="stylesheet" href="styles.css">
+  <script>(function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();</script>
+  <style>
+    /* Admin-specific accent: danger red brand color */
+    .sidebar .sidebar-logo-title { background: linear-gradient(135deg, #f87171, #fb923c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1rem; }
+    .filter-btn { padding:6px 14px; border-radius:var(--radius-full); font-size:0.8rem; font-weight:600; cursor:pointer; border:1px solid var(--glass-border); background:var(--glass-bg); color:var(--text-secondary); transition:var(--transition); }
+    .filter-btn.active { background:rgba(59,130,246,0.15); color:var(--primary-light); border-color:var(--primary); }
+  </style>
 </head>
 <body>
-    <div id="toast-container" class="toast-container"></div>
-    <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-toggle-btn">
-        <script>document.write(document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️')</script>
-    </button>
-    
-    <!-- Admin Login Overlay -->
-    <div id="admin-login-overlay" class="auth-wrapper" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: var(--bg-darker);">
-        <div class="glass-panel auth-card" style="border-color: var(--danger);">
-            <h2 style="text-align: center; color: var(--danger);">RESTRICTED ACCESS</h2>
-            <p style="text-align: center; margin-bottom: 2rem;">Authorized Government Personnel Only</p>
-            
-            <form id="admin-login-form">
-                <div class="form-group">
-                    <label>Admin ID</label>
-                    <input type="text" id="admin-id" required placeholder="admin">
-                </div>
-                <div class="form-group">
-                    <label>Passcode</label>
-                    <input type="password" id="admin-pass" required placeholder="admin123">
-                </div>
-                <button type="submit" class="btn btn-danger btn-block">Authorize</button>
-            </form>
-            
-            <p style="text-align: center; margin-top: 1.5rem;">
-                New Responder? <a href="admin-register.html" style="color: var(--danger);">Request clearance here</a>
-            </p>
-            <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
-                <a href="login.html" style="color: var(--primary); font-size: 0.875rem;">Return to Citizen Login</a>
-            </div>
+  <div class="mesh-bg"></div>
+  <div id="toast-container"></div>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+
+  <!-- ═══════════════ ADMIN LOGIN OVERLAY ═══════════════ -->
+  <div id="admin-login-overlay" class="auth-page" style="position:fixed;inset:0;z-index:900;background:var(--bg-base);">
+    <div class="auth-container">
+      <div class="auth-brand" style="background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(124,58,237,0.25));">
+        <div class="auth-brand-icon">🔒</div>
+        <h2>Mission Control</h2>
+        <p>Authorized government and rescue personnel only. All access attempts are logged and audited.</p>
+        <ul class="auth-features">
+          <li>Real-time SOS emergency feed</li>
+          <li>Responder dispatch system</li>
+          <li>Citizen incident reports</li>
+          <li>Full audit trail</li>
+        </ul>
+        <div style="margin-top:2rem; padding:12px; background:rgba(239,68,68,0.1); border-radius:10px; border:1px solid rgba(239,68,68,0.2);">
+          <p style="font-size:0.78rem; color:rgba(255,255,255,0.6); margin:0;">Demo credentials: <strong style="color:white;">admin</strong> / <strong style="color:white;">admin123</strong></p>
         </div>
-    </div>
+      </div>
 
-    <!-- Admin Dashboard (Hidden initially) -->
-    <div class="dashboard-layout" id="admin-dashboard" style="display: none;">
-        <!-- Sidebar -->
-        <aside class="sidebar" style="border-color: rgba(239, 68, 68, 0.2);">
-            <div class="logo">
-                <span style="font-size: 1.5rem; color: var(--danger);">🚨</span> CommandCenter
+      <div class="auth-form-side">
+        <h2 style="color:var(--danger-light); margin-bottom:0.25rem;">Restricted Access</h2>
+        <p style="margin-bottom:1.5rem; font-size:0.875rem;">Authenticate with your government credentials</p>
+
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label class="form-label">Admin ID / Badge Number</label>
+            <input type="text" id="admin-id" class="form-control" placeholder="e.g. admin or RESCUE-001" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Secure Passcode</label>
+            <div class="input-icon-wrapper">
+              <input type="password" id="admin-pass" class="form-control" placeholder="••••••••" required>
+              <button type="button" class="input-eye-btn" onclick="togglePassword('admin-pass','admin-eye')" id="admin-eye">👁️</button>
             </div>
-            
-            <ul class="nav-links">
-                <li class="nav-link active" onclick="switchAdminSection('emergencies-section')">
-                    <span class="nav-icon">🚑</span> Active Emergencies
-                </li>
-                <li class="nav-link" onclick="switchAdminSection('reports-section')">
-                    <span class="nav-icon">📋</span> Citizen Reports
-                </li>
-            </ul>
-            
-            <div class="user-info-widget">
-                <div style="font-weight: 500; margin-bottom: 5px;" id="admin-officer-name">Officer on Duty</div>
-                <div class="credits-badge" style="background: rgba(59, 130, 246, 0.2); color: var(--primary);">
-                    Command Admin
-                </div>
-                <button class="btn btn-outline btn-block" style="margin-top: 15px; border-color: var(--danger); color: var(--danger);" onclick="adminLogout()">Log out</button>
-            </div>
-        </aside>
+          </div>
+          <button type="submit" class="btn btn-danger btn-block btn-lg" style="margin-top:0.5rem;">🔒 Authorize Access</button>
+        </form>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            
-            <!-- Emergencies Section -->
-            <section id="emergencies-section" class="section active">
-                <div class="topbar">
-                    <h1 class="page-title">SOS Priority Queue</h1>
-                    <button class="btn btn-primary" onclick="loadEmergencies()">Refresh Feed</button>
-                </div>
-                
-                <div class="glass-panel table-container">
-                    <table id="emergencies-table">
-                        <thead>
-                            <tr>
-                                <th>Victim Name</th>
-                                <th>Location</th>
-                                <th>Time Reported</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="emergencies-body">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Reports Section -->
-            <section id="reports-section" class="section">
-                <div class="topbar">
-                    <h1 class="page-title">Citizen Incident Reports</h1>
-                    <button class="btn btn-primary" onclick="loadReports()">Refresh Feed</button>
-                </div>
-                
-                <div class="glass-panel table-container">
-                    <table id="reports-table">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Location</th>
-                                <th>Reporter</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reports-body">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </main>
+        <div class="auth-divider">or</div>
+        <div class="auth-footer-links">
+          New responder? <a href="admin-register.html" style="color:var(--danger);">Request Clearance →</a>
+          <br><br>
+          <a href="login.html" style="font-size:0.8rem;">← Back to Citizen Login</a>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- We pull the toast logic from script.js, but handle admin logic here -->
-    <script src="script.js"></script>
-    <script>
-        // Disable regular auth check from script.js for this page since it has its own
-        window.requireAuth = function() {}; 
+  <!-- ═══════════════ ADMIN DASHBOARD ═══════════════ -->
+  <div id="admin-dashboard" style="display:none;" class="dashboard-layout">
 
-        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('admin-id').value;
-            const pass = document.getElementById('admin-pass').value;
-            
-            // Hardcoded credentials for Demo OR Dynamic LocalStorage Check
-            let admins = [];
-            try {
-                admins = JSON.parse(localStorage.getItem('admins')) || [];
-            } catch (err) {}
-            
-            const dynamicAdmin = admins.find(a => a.adminId === id && a.password === pass);
-            
-            if ((id === 'admin' && pass === 'admin123') || dynamicAdmin) {
-                const officerName = dynamicAdmin ? dynamicAdmin.name : 'System Admin';
-                document.getElementById('admin-login-overlay').style.display = 'none';
-                document.getElementById('admin-dashboard').style.display = 'flex';
-                document.getElementById('admin-officer-name').innerText = officerName;
-                showToast(`Access granted. Welcome, ${officerName}.`, 'success');
-                loadEmergencies();
-                loadReports();
-            } else {
-                showToast('UNAUTHORIZED ACCESS ATTEMPT DETECTED', 'danger');
-            }
-        });
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="#" class="sidebar-logo">
+        <div class="sidebar-logo-icon" style="background:linear-gradient(135deg,var(--danger),#f43f5e);">🚨</div>
+        <div class="sidebar-logo-text">
+          <span class="sidebar-logo-title">Mission Control</span>
+          <span class="sidebar-logo-sub">Command & Dispatch</span>
+        </div>
+      </a>
 
-        function switchAdminSection(sectionId) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
-            document.getElementById(sectionId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            
-            if(sectionId === 'emergencies-section') loadEmergencies();
-            if(sectionId === 'reports-section') loadReports();
-        }
+      <div class="sidebar-section-label">Operations</div>
+      <ul class="nav-list">
+        <li><button class="nav-item active" data-section="admin-emergencies" onclick="switchAdminSection('admin-emergencies')"><span class="nav-icon">🚑</span><span>Emergency Queue</span><span class="nav-badge" id="badge-sos">0</span></button></li>
+        <li><button class="nav-item" data-section="admin-incidents" onclick="switchAdminSection('admin-incidents')"><span class="nav-icon">📋</span><span>Incident Reports</span></button></li>
+        <li><button class="nav-item" data-section="admin-stats" onclick="switchAdminSection('admin-stats')"><span class="nav-icon">📊</span><span>Statistics</span></button></li>
+      </ul>
 
-        function adminLogout() {
-            document.getElementById('admin-login-overlay').style.display = 'flex';
-            document.getElementById('admin-dashboard').style.display = 'none';
-            document.getElementById('admin-login-form').reset();
-            showToast('Logged out of Admin Panel.', 'success');
-        }
+      <div class="sidebar-footer">
+        <div class="user-widget">
+          <div class="user-avatar" style="background:linear-gradient(135deg,var(--danger),#f43f5e);">👮</div>
+          <div class="user-info">
+            <div class="user-name" id="admin-officer-name">Loading…</div>
+            <div class="user-role" id="admin-officer-dept">Command Admin</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-block" style="margin-top:10px; font-size:0.8rem;" onclick="adminLogout()">← Log Out</button>
+      </div>
+    </aside>
 
-        // Load SOS table
-        function loadEmergencies() {
-            const tbody = document.getElementById('emergencies-body');
-            const data = JSON.parse(localStorage.getItem('emergencies')) || [];
-            
-            tbody.innerHTML = '';
-            
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No active emergencies found.</td></tr>`;
-                return;
-            }
+    <!-- Main -->
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="status-dot" style="background:var(--danger); box-shadow:0 0 8px var(--danger-glow);"></div>
+          <div class="breadcrumb">Mission Control / <strong id="breadcrumb-page">Emergency Queue</strong></div>
+        </div>
+        <div class="topbar-right">
+          <div class="live-clock mono" id="live-clock">--:--:--</div>
+          <button class="btn btn-ghost btn-sm" onclick="loadEmergenciesTable(); loadIncidentsTable(); loadAdminStats(); showToast('Feed refreshed.','success');">🔄 Refresh</button>
+        </div>
+      </header>
 
-            data.forEach(req => {
-                const tr = document.createElement('tr');
-                let badgeClass = 'badge-emergency';
-                if(req.status === 'Resolved') badgeClass = 'badge-resolved';
-                if(req.status === 'Responder Assigned') badgeClass = 'badge-pending';
-                
-                tr.innerHTML = `
-                    <td style="color: white; font-weight: 500;">
-                        ${req.userName}
-                        <br><small style="color:var(--text-muted)">☎ ${req.contact}</small>
-                    </td>
-                    <td>${req.location}</td>
-                    <td style="font-size: 0.8rem;">${req.time}</td>
-                    <td><span class="badge ${badgeClass}">${req.status}</span></td>
-                    <td>
-                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="assignResponder(${req.id})">Dispatch</button>
-                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem; margin-left: 5px;" onclick="resolveEmergency(${req.id})">Mark Safe</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+      <div class="page-content">
 
-        // Action: Assign Responder
-        function assignResponder(id) {
-            updateEmergencyStatus(id, 'Responder Assigned');
-            showToast('Nearest responder dispatched successfully.', 'success');
-            loadEmergencies();
-        }
+        <!-- ══════ Stat Bar ══════ -->
+        <div class="stats-grid" style="grid-template-columns:repeat(5,1fr); margin-bottom:1.5rem;">
+          <div class="glass stat-card" style="--card-color:rgba(239,68,68,0.3); padding:1rem;">
+            <div class="stat-label">Total SOS</div>
+            <div class="stat-value" id="stat-total-sos" style="font-size:1.75rem;">0</div>
+          </div>
+          <div class="glass stat-card" style="--card-color:rgba(239,68,68,0.3); padding:1rem;">
+            <div class="stat-label">Pending</div>
+            <div class="stat-value" id="stat-pending" style="font-size:1.75rem; color:var(--danger);">0</div>
+          </div>
+          <div class="glass stat-card" style="--card-color:rgba(245,158,11,0.3); padding:1rem;">
+            <div class="stat-label">Dispatched</div>
+            <div class="stat-value" id="stat-assigned" style="font-size:1.75rem; color:var(--warning);">0</div>
+          </div>
+          <div class="glass stat-card" style="--card-color:rgba(16,185,129,0.3); padding:1rem;">
+            <div class="stat-label">Resolved</div>
+            <div class="stat-value" id="stat-resolved" style="font-size:1.75rem; color:var(--success);">0</div>
+          </div>
+          <div class="glass stat-card" style="--card-color:rgba(59,130,246,0.3); padding:1rem;">
+            <div class="stat-label">Reports</div>
+            <div class="stat-value" id="stat-total-inc" style="font-size:1.75rem; color:var(--primary);">0</div>
+          </div>
+        </div>
 
-        function resolveEmergency(id) {
-            updateEmergencyStatus(id, 'Resolved');
-            showToast('Emergency marked as resolved.', 'success');
-            loadEmergencies();
-        }
+        <!-- ══════ Emergency Queue ══════ -->
+        <section id="admin-emergencies" class="section active">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+            <h2>🚑 Live Emergency Queue</h2>
+            <button class="btn btn-primary btn-sm" onclick="loadEmergenciesTable()">↻ Refresh</button>
+          </div>
 
-        function updateEmergencyStatus(id, newStatus) {
-            const data = JSON.parse(localStorage.getItem('emergencies'));
-            const index = data.findIndex(d => d.id === id);
-            if(index > -1) {
-                data[index].status = newStatus;
-                localStorage.setItem('emergencies', JSON.stringify(data));
-            }
-        }
+          <div class="glass" style="padding:1.5rem;">
+            <div class="filter-bar">
+              <button class="filter-btn active" onclick="filterEmergencies('all',this)">All</button>
+              <button class="filter-btn" onclick="filterEmergencies('Emergency',this)">🔴 Active</button>
+              <button class="filter-btn" onclick="filterEmergencies('Responder Assigned',this)">🟡 Dispatched</button>
+              <button class="filter-btn" onclick="filterEmergencies('Resolved',this)">🟢 Resolved</button>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead><tr><th>Citizen</th><th>Location</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="emergencies-body">
+                  <tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-tertiary);">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-        // Load Incident Reports table
-        function loadReports() {
-            const tbody = document.getElementById('reports-body');
-            const data = JSON.parse(localStorage.getItem('incidents')) || [];
-            
-            tbody.innerHTML = '';
-            
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No reports logged.</td></tr>`;
-                return;
-            }
+        <!-- ══════ Incident Reports ══════ -->
+        <section id="admin-incidents" class="section">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+            <h2>📋 Citizen Incident Reports</h2>
+            <button class="btn btn-primary btn-sm" onclick="loadIncidentsTable()">↻ Refresh</button>
+          </div>
+          <div class="glass" style="padding:1.5rem;">
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead><tr><th>Type</th><th>Location</th><th>Reporter</th><th>Description</th><th>Severity</th></tr></thead>
+                <tbody id="incidents-body">
+                  <tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-tertiary);">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-            data.forEach(req => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: bold; color: var(--danger);">${req.type}</td>
-                    <td>${req.location}</td>
-                    <td>${req.reportedBy}</td>
-                    <td style="max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${req.description}">
-                        ${req.description}
-                    </td>
-                    <td><span class="badge badge-pending">${req.status.toUpperCase()}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-    </script>
+        <!-- ══════ Stats Section ══════ -->
+        <section id="admin-stats" class="section">
+          <h2 style="margin-bottom:1rem;">📊 Operational Statistics</h2>
+          <div class="grid-2">
+            <div class="glass" style="padding:1.5rem;">
+              <div class="card-title" style="margin-bottom:1rem;">Emergency Response Summary</div>
+              <div style="display:flex; flex-direction:column; gap:10px; font-size:0.875rem;">
+                <div style="display:flex; justify-content:space-between; padding:10px; background:rgba(239,68,68,0.06); border-radius:8px;"><span>Total SOS Alerts</span><strong id="stats-total-sos2">0</strong></div>
+                <div style="display:flex; justify-content:space-between; padding:10px; background:rgba(16,185,129,0.06); border-radius:8px;"><span>Successfully Resolved</span><strong id="stats-resolved2">0</strong></div>
+                <div style="display:flex; justify-content:space-between; padding:10px; background:rgba(245,158,11,0.06); border-radius:8px;"><span>Currently Dispatched</span><strong id="stats-assigned2">0</strong></div>
+                <div style="display:flex; justify-content:space-between; padding:10px; background:rgba(59,130,246,0.06); border-radius:8px;"><span>Total Incident Reports</span><strong id="stats-incidents2">0</strong></div>
+              </div>
+            </div>
+            <div class="glass" style="padding:1.5rem;">
+              <div class="card-title" style="margin-bottom:1rem;">Registered Users</div>
+              <div id="users-list" style="display:flex; flex-direction:column; gap:8px; font-size:0.875rem;">Loading…</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    window.requireAuth = function(){};
+
+    // Filter emergencies table
+    let currentFilter = 'all';
+    function filterEmergencies(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadEmergenciesTable();
+    }
+
+    // Override loadEmergenciesTable to support filtering
+    const _origLoad = loadEmergenciesTable;
+    loadEmergenciesTable = function() {
+      const tbody = document.getElementById('emergencies-body');
+      if (!tbody) return;
+      let data = JSON.parse(localStorage.getItem('emergencies')) || [];
+      if (currentFilter !== 'all') data = data.filter(e => e.status === currentFilter);
+      loadAdminStats();
+
+      // Update badge
+      const allData = JSON.parse(localStorage.getItem('emergencies')) || [];
+      const pendingCount = allData.filter(e => e.status === 'Emergency').length;
+      const badge = document.getElementById('badge-sos');
+      if (badge) { badge.textContent = pendingCount; badge.style.display = pendingCount > 0 ? '' : 'none'; }
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-tertiary);">No records match this filter.</td></tr>`;
+        return;
+      }
+      const badgeMap = { 'Emergency': 'badge-emergency badge-dot', 'Responder Assigned': 'badge-pending', 'Resolved': 'badge-resolved', 'Prediction Alert': 'badge-info' };
+      tbody.innerHTML = data.map(req => `
+        <tr>
+          <td>
+            <div style="font-weight:600">${req.userName}</div>
+            <div style="font-size:0.72rem; color:var(--text-tertiary)">☎ ${req.contact || '—'}</div>
+          </td>
+          <td>
+            <div>${req.location}</div>
+            <div style="font-size:0.72rem; color:var(--text-tertiary)">${req.address || ''}</div>
+          </td>
+          <td style="font-size:0.8rem; color:var(--text-secondary); white-space:nowrap;">${req.time}</td>
+          <td><span class="badge ${badgeMap[req.status] || 'badge-info'}">${req.status}</span></td>
+          <td style="white-space:nowrap;">
+            ${req.status !== 'Resolved' ? `
+              <button class="btn btn-ghost btn-sm" style="margin-right:4px;" onclick="assignResponder(${req.id})">🚑 Dispatch</button>
+              <button class="btn btn-success btn-sm" onclick="resolveEmergency(${req.id})">✓</button>
+            ` : `<span style="color:var(--text-tertiary); font-size:0.8rem;">Closed</span>`}
+          </td>
+        </tr>`).join('');
+    };
+
+    // Extra stats page logic
+    const _origStats = loadAdminStats;
+    loadAdminStats = function() {
+      _origStats();
+      const em  = JSON.parse(localStorage.getItem('emergencies')) || [];
+      const inc = JSON.parse(localStorage.getItem('incidents'))   || [];
+      const s = id => document.getElementById(id);
+      if (s('stats-total-sos2')) s('stats-total-sos2').textContent = em.length;
+      if (s('stats-resolved2'))  s('stats-resolved2').textContent  = em.filter(e=>e.status==='Resolved').length;
+      if (s('stats-assigned2'))  s('stats-assigned2').textContent  = em.filter(e=>e.status==='Responder Assigned').length;
+      if (s('stats-incidents2')) s('stats-incidents2').textContent = inc.length;
+
+      // Users list
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const ul = document.getElementById('users-list');
+      if (ul) {
+        if (users.length === 0) { ul.innerHTML = '<p style="color:var(--text-tertiary);">No citizens registered yet.</p>'; return; }
+        ul.innerHTML = users.map(u => `
+          <div style="display:flex; align-items:center; gap:10px; padding:10px; background:var(--glass-bg); border-radius:8px; border:1px solid var(--glass-border);">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--violet));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;flex-shrink:0;">${u.name.charAt(0)}</div>
+            <div style="min-width:0;">
+              <div style="font-weight:600; font-size:0.875rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${u.name}</div>
+              <div style="font-size:0.72rem; color:var(--text-tertiary);">${u.email} · 🛡️ ${u.credits} credits</div>
+            </div>
+          </div>`).join('');
+      }
+    };
+
+    // Auto-refresh on tab switch
+    const origSwitch = switchAdminSection;
+    switchAdminSection = function(id) {
+      origSwitch(id);
+      if (id === 'admin-stats') loadAdminStats();
+    };
+  </script>
 </body>
 </html>
