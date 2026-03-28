@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Disaster Response System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } 
+        else if (window.matchMedia('(prefers-color-scheme: light)').matches) { document.documentElement.setAttribute('data-theme', 'light'); }
+    </script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <button class="theme-toggle-btn" onclick="toggleTheme()">
+        <script>document.write(document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️')</script>
+    </button>
+    
+    <div class="auth-wrapper">
+        <div class="glass-panel auth-card">
+            <h2 style="text-align: center; color: var(--primary);">System Login</h2>
+            <p style="text-align: center; margin-bottom: 2rem;">Authorized Access Only</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" required placeholder="user@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; font-size: 0.875rem;">
+                    <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
+                        <input type="checkbox" style="width: auto;"> Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Log In to Dashboard</button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1.5rem;">
+                Don't have an account? <a href="register.html">Register here</a>
+            </p>
+            <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                <a href="admin.html" style="color: var(--danger); font-size: 0.875rem;">Are you a Responder / Admin? Click here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Redirect to dashboard if already logged in as a normal user
+        document.addEventListener('DOMContentLoaded', () => {
+             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+             if (currentUser && currentUser.hasOwnProperty('credits')) {
+                 window.location.href = 'index.html';
+             }
+        });
+    </script>
+</body>
+</html>

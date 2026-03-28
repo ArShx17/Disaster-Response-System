@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AI Disaster Response System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } 
+        else if (window.matchMedia('(prefers-color-scheme: light)').matches) { document.documentElement.setAttribute('data-theme', 'light'); }
+    </script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-toggle-btn">
+        <script>document.write(document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️')</script>
+    </button>
+    
+    <!-- Admin Login Overlay -->
+    <div id="admin-login-overlay" class="auth-wrapper" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: var(--bg-darker);">
+        <div class="glass-panel auth-card" style="border-color: var(--danger);">
+            <h2 style="text-align: center; color: var(--danger);">RESTRICTED ACCESS</h2>
+            <p style="text-align: center; margin-bottom: 2rem;">Authorized Government Personnel Only</p>
+            
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label>Admin ID</label>
+                    <input type="text" id="admin-id" required placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label>Passcode</label>
+                    <input type="password" id="admin-pass" required placeholder="admin123">
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Authorize</button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1.5rem;">
+                New Responder? <a href="admin-register.html" style="color: var(--danger);">Request clearance here</a>
+            </p>
+            <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                <a href="login.html" style="color: var(--primary); font-size: 0.875rem;">Return to Citizen Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (Hidden initially) -->
+    <div class="dashboard-layout" id="admin-dashboard" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" style="border-color: rgba(239, 68, 68, 0.2);">
+            <div class="logo">
+                <span style="font-size: 1.5rem; color: var(--danger);">🚨</span> CommandCenter
+            </div>
+            
+            <ul class="nav-links">
+                <li class="nav-link active" onclick="switchAdminSection('emergencies-section')">
+                    <span class="nav-icon">🚑</span> Active Emergencies
+                </li>
+                <li class="nav-link" onclick="switchAdminSection('reports-section')">
+                    <span class="nav-icon">📋</span> Citizen Reports
+                </li>
+            </ul>
+            
+            <div class="user-info-widget">
+                <div style="font-weight: 500; margin-bottom: 5px;" id="admin-officer-name">Officer on Duty</div>
+                <div class="credits-badge" style="background: rgba(59, 130, 246, 0.2); color: var(--primary);">
+                    Command Admin
+                </div>
+                <button class="btn btn-outline btn-block" style="margin-top: 15px; border-color: var(--danger); color: var(--danger);" onclick="adminLogout()">Log out</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Emergencies Section -->
+            <section id="emergencies-section" class="section active">
+                <div class="topbar">
+                    <h1 class="page-title">SOS Priority Queue</h1>
+                    <button class="btn btn-primary" onclick="loadEmergencies()">Refresh Feed</button>
+                </div>
+                
+                <div class="glass-panel table-container">
+                    <table id="emergencies-table">
+                        <thead>
+                            <tr>
+                                <th>Victim Name</th>
+                                <th>Location</th>
+                                <th>Time Reported</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emergencies-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports-section" class="section">
+                <div class="topbar">
+                    <h1 class="page-title">Citizen Incident Reports</h1>
+                    <button class="btn btn-primary" onclick="loadReports()">Refresh Feed</button>
+                </div>
+                
+                <div class="glass-panel table-container">
+                    <table id="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Reporter</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reports-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- We pull the toast logic from script.js, but handle admin logic here -->
+    <script src="script.js"></script>
+    <script>
+        // Disable regular auth check from script.js for this page since it has its own
+        window.requireAuth = function() {}; 
+
+        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('admin-id').value;
+            const pass = document.getElementById('admin-pass').value;
+            
+            // Hardcoded credentials for Demo OR Dynamic LocalStorage Check
+            let admins = [];
+            try {
+                admins = JSON.parse(localStorage.getItem('admins')) || [];
+            } catch (err) {}
+            
+            const dynamicAdmin = admins.find(a => a.adminId === id && a.password === pass);
+            
+            if ((id === 'admin' && pass === 'admin123') || dynamicAdmin) {
+                const officerName = dynamicAdmin ? dynamicAdmin.name : 'System Admin';
+                document.getElementById('admin-login-overlay').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'flex';
+                document.getElementById('admin-officer-name').innerText = officerName;
+                showToast(`Access granted. Welcome, ${officerName}.`, 'success');
+                loadEmergencies();
+                loadReports();
+            } else {
+                showToast('UNAUTHORIZED ACCESS ATTEMPT DETECTED', 'danger');
+            }
+        });
+
+        function switchAdminSection(sectionId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            if(sectionId === 'emergencies-section') loadEmergencies();
+            if(sectionId === 'reports-section') loadReports();
+        }
+
+        function adminLogout() {
+            document.getElementById('admin-login-overlay').style.display = 'flex';
+            document.getElementById('admin-dashboard').style.display = 'none';
+            document.getElementById('admin-login-form').reset();
+            showToast('Logged out of Admin Panel.', 'success');
+        }
+
+        // Load SOS table
+        function loadEmergencies() {
+            const tbody = document.getElementById('emergencies-body');
+            const data = JSON.parse(localStorage.getItem('emergencies')) || [];
+            
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No active emergencies found.</td></tr>`;
+                return;
+            }
+
+            data.forEach(req => {
+                const tr = document.createElement('tr');
+                let badgeClass = 'badge-emergency';
+                if(req.status === 'Resolved') badgeClass = 'badge-resolved';
+                if(req.status === 'Responder Assigned') badgeClass = 'badge-pending';
+                
+                tr.innerHTML = `
+                    <td style="color: white; font-weight: 500;">
+                        ${req.userName}
+                        <br><small style="color:var(--text-muted)">☎ ${req.contact}</small>
+                    </td>
+                    <td>${req.location}</td>
+                    <td style="font-size: 0.8rem;">${req.time}</td>
+                    <td><span class="badge ${badgeClass}">${req.status}</span></td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="assignResponder(${req.id})">Dispatch</button>
+                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem; margin-left: 5px;" onclick="resolveEmergency(${req.id})">Mark Safe</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Action: Assign Responder
+        function assignResponder(id) {
+            updateEmergencyStatus(id, 'Responder Assigned');
+            showToast('Nearest responder dispatched successfully.', 'success');
+            loadEmergencies();
+        }
+
+        function resolveEmergency(id) {
+            updateEmergencyStatus(id, 'Resolved');
+            showToast('Emergency marked as resolved.', 'success');
+            loadEmergencies();
+        }
+
+        function updateEmergencyStatus(id, newStatus) {
+            const data = JSON.parse(localStorage.getItem('emergencies'));
+            const index = data.findIndex(d => d.id === id);
+            if(index > -1) {
+                data[index].status = newStatus;
+                localStorage.setItem('emergencies', JSON.stringify(data));
+            }
+        }
+
+        // Load Incident Reports table
+        function loadReports() {
+            const tbody = document.getElementById('reports-body');
+            const data = JSON.parse(localStorage.getItem('incidents')) || [];
+            
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No reports logged.</td></tr>`;
+                return;
+            }
+
+            data.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: bold; color: var(--danger);">${req.type}</td>
+                    <td>${req.location}</td>
+                    <td>${req.reportedBy}</td>
+                    <td style="max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${req.description}">
+                        ${req.description}
+                    </td>
+                    <td><span class="badge badge-pending">${req.status.toUpperCase()}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
