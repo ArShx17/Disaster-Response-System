@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   const fetchDisasters = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/disasters');
+      const res = await axios.get(import.meta.env.VITE_API_URL || 'http://localhost:5000/api/disasters');
       setDisasters(res.data);
     } catch (err) {
       console.error(err);

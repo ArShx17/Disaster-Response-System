@@ -19,10 +19,10 @@ const Report = () => {
     e.preventDefault();
     setLoading(true); setError(null);
     try {
-      await axios.post('http://localhost:5000/api/disasters', formData);
+      await axios.post(import.meta.env.VITE_API_URL || 'http://localhost:5000/api/disasters', formData);
       setSuccess(true);
       setTimeout(() => navigate('/dashboard'), 2000);
-    } catch (err) {
+    } catch {
       setError('Failed to securely link to AI Engine. Please check backend.');
     } finally {
       setLoading(false);

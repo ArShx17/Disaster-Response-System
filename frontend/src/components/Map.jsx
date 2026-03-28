@@ -29,6 +29,17 @@ const DisasterMap = ({ disasters }) => {
     return color;
   };
 
+  if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+    return (
+      <div className="w-full h-full min-h-[500px] bg-slate-800 rounded-2xl flex items-center justify-center text-white relative">
+        <div className="absolute top-4 left-4 bg-red-500/80 text-white text-xs px-3 py-1 rounded backdrop-blur">
+          Missing Google Maps API Key in .env
+        </div>
+        <span className="text-white/50 animate-pulse">Waiting for MAP Configuration...</span>
+      </div>
+    );
+  }
+
   return isLoaded ? (
     <div className="w-full h-full min-h-[500px] overflow-hidden rounded-2xl">
       <GoogleMap
@@ -73,12 +84,6 @@ const DisasterMap = ({ disasters }) => {
           </InfoWindow>
         )}
       </GoogleMap>
-
-      {!import.meta.env.VITE_GOOGLE_MAPS_API_KEY && (
-        <div className="absolute top-4 left-4 bg-red-500/80 text-white text-xs px-3 py-1 rounded backdrop-blur">
-          Missing Google Maps API Key in .env
-        </div>
-      )}
     </div>
   ) : (
     <div className="w-full h-full min-h-[500px] bg-slate-800 animate-pulse rounded-2xl flex items-center justify-center text-white/50">

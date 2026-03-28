@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
 const disasterRoutes = require('./routes/disasterRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/disasters', disasterRoutes);
+app.use('/api/auth', authRoutes);
 
 // Root Endpoint
 app.get('/', (req, res) => {
