@@ -3,28 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register — AI Disaster Response System</title>
-  <meta name="description" content="Create your account to access the AI Disaster Response Coordination System.">
+  <title>Register — AI Disaster Response</title>
+  <meta name="description" content="Create your account for the AI Disaster Response Coordination System.">
   <link rel="stylesheet" href="styles.css">
-  <script>
-    // Anti-FOUC: Apply theme before paint
-    (function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();
-  </script>
+  <script>(function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();</script>
 </head>
 <body>
   <div class="mesh-bg"></div>
   <div id="toast-container"></div>
-
-  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">&#9788;</button>
 
   <div class="auth-page">
     <div class="auth-container">
 
       <!-- Brand Panel -->
       <div class="auth-brand">
-        <div class="auth-brand-icon">🌍</div>
+        <div class="auth-brand-label">Emergency Network</div>
+        <div class="auth-brand-logo">AI</div>
         <h2>AI Disaster Response</h2>
-        <p>Join the national emergency response network. Get alerts, request help, and report incidents.</p>
+        <p>Join the national emergency response network. Get real-time alerts, request help, and report incidents.</p>
         <ul class="auth-features">
           <li>Instant SOS emergency button</li>
           <li>Real-time disaster alerts</li>
@@ -60,7 +57,7 @@
               <label class="form-label">Full Name</label>
               <input type="text" id="reg-name" class="form-control" placeholder="John Doe" required>
             </div>
-            <div class="grid-2">
+            <div class="grid-2" style="margin-top:0; gap:10px;">
               <div class="form-group">
                 <label class="form-label">Email Address</label>
                 <input type="email" id="reg-email" class="form-control" placeholder="john@example.com" required>
@@ -72,7 +69,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">Residential Address</label>
-              <textarea id="reg-address" class="form-control" placeholder="Full home address" style="min-height:80px" required></textarea>
+              <textarea id="reg-address" class="form-control" placeholder="Full home address" style="min-height:70px" required></textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Emergency Contact (Family Member Phone)</label>
@@ -82,11 +79,11 @@
               <label class="form-label">Password</label>
               <div class="input-icon-wrapper">
                 <input type="password" id="reg-password" class="form-control" placeholder="Min 8 characters" required oninput="checkPasswordStrength(this.value)">
-                <button type="button" class="input-eye-btn" id="reg-eye" onclick="togglePassword('reg-password','reg-eye')">👁️</button>
+                <button type="button" class="input-eye-btn" id="reg-eye" onclick="togglePassword('reg-password','reg-eye')">&#128065;</button>
               </div>
               <div class="strength-bar"><div class="strength-bar-fill strength-0" id="strength-fill"></div></div>
               <div style="display:flex; justify-content:space-between; margin-top:4px;">
-                <small class="form-hint">Use uppercase, numbers & symbols</small>
+                <small class="form-hint">Use uppercase, numbers &amp; symbols</small>
                 <small id="strength-label" style="font-weight:600"></small>
               </div>
             </div>
@@ -95,11 +92,11 @@
             <div class="form-group">
               <label class="form-label">Verify Via</label>
               <div style="display:flex; gap:8px; margin-bottom:10px;">
-                <button type="button" class="type-chip otp-method-chip selected" data-method="phone" onclick="selectOTPMethod('phone')">📱 Phone</button>
-                <button type="button" class="type-chip otp-method-chip" data-method="email" onclick="selectOTPMethod('email')">📧 Email</button>
+                <button type="button" class="type-chip otp-method-chip selected" data-method="phone" onclick="selectOTPMethod('phone')">Phone</button>
+                <button type="button" class="type-chip otp-method-chip" data-method="email" onclick="selectOTPMethod('email')">Email</button>
               </div>
               <button type="button" class="btn btn-outline-primary btn-block" onclick="sendOTP()">
-                Send OTP
+                Send Verification Code
               </button>
             </div>
           </div>
@@ -107,7 +104,6 @@
           <!-- Step 2: OTP Verification -->
           <div class="wizard-step-content" id="step-2" style="display:none">
             <div style="text-align:center; margin-bottom:1.5rem;">
-              <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔐</div>
               <h3>Enter Verification Code</h3>
               <p style="font-size:0.875rem; margin-top:0.25rem;">Enter the 4-digit code sent to your phone/email</p>
             </div>
@@ -127,7 +123,7 @@
               Create My Account
             </button>
             <button type="button" class="btn btn-ghost btn-block" style="margin-top:8px" onclick="goToStep(1)">
-              ← Go Back
+              Go Back
             </button>
           </div>
         </form>
@@ -136,7 +132,7 @@
         <div class="auth-footer-links">
           Already registered? <a href="login.html">Sign in here</a>
           <br><br>
-          <a href="admin.html" style="color:var(--danger); font-size:0.8rem;">🔒 Gov / Responder Access →</a>
+          <a href="admin.html" style="color:var(--danger); font-size:0.8rem;">Gov / Responder Access</a>
         </div>
       </div>
     </div>
@@ -144,12 +140,10 @@
 
   <script src="script.js"></script>
   <script>
-    // wizard content visibility
     function selectOTPMethod(m) {
       document.querySelectorAll('.otp-method-chip').forEach(c => c.classList.remove('selected'));
       document.querySelector(`[data-method="${m}"]`)?.classList.add('selected');
     }
-    // Override goToStep to handle display:none
     const _goToStep = goToStep;
     goToStep = function(step) {
       _goToStep(step);
@@ -157,7 +151,6 @@
       const target = document.getElementById(`step-${step}`);
       if (target) target.style.display = 'block';
     };
-    // Override wstep classes
     const origGTS = goToStep;
     goToStep = function(step) {
       origGTS(step);

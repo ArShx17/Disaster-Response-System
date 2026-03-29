@@ -3,38 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — AI Disaster Response System</title>
+  <title>Login — AI Disaster Response</title>
   <meta name="description" content="Secure login to the AI Disaster Response Coordination System.">
   <link rel="stylesheet" href="styles.css">
-  <script>
-    (function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();
-  </script>
-  <style>
-    /* Extra particles for login page */
-    .particle { position: fixed; border-radius: 50%; pointer-events: none; opacity: 0.15; animation: floatParticle linear infinite; z-index: -1; }
-    @keyframes floatParticle { 0%{transform:translateY(100vh) scale(0);opacity:0;} 10%{opacity:0.15;} 90%{opacity:0.15;} 100%{transform:translateY(-20vh) scale(1.2);opacity:0;} }
-  </style>
+  <script>(function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();</script>
 </head>
 <body>
   <div class="mesh-bg"></div>
   <div id="toast-container"></div>
-  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">&#9788;</button>
 
   <div class="auth-page">
     <div class="auth-container">
 
-      <!-- Brand Side -->
+      <!-- Brand Panel -->
       <div class="auth-brand">
-        <div class="auth-brand-icon">🚨</div>
+        <div class="auth-brand-label">Emergency Network</div>
+        <div class="auth-brand-logo">AI</div>
         <h2>Welcome Back</h2>
         <p>Access the national AI-powered emergency coordination platform. Your safety is our priority.</p>
-        <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.06); border-radius:12px; text-align:left;">
-          <div style="font-size:0.78rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">SYSTEM STATUS</div>
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <div class="auth-system-status">
+          <div class="auth-system-status-label">System Status</div>
+          <div class="auth-system-status-row">
             <div class="status-dot"></div>
-            <span style="font-size:0.85rem; color:rgba(255,255,255,0.85)">All systems operational</span>
+            <span class="auth-system-status-text">All systems operational</span>
           </div>
-          <div style="font-size:0.78rem; color:rgba(255,255,255,0.45)">48 responders active · 14 routes open</div>
+          <div class="auth-system-status-sub">48 responders active · 14 routes open</div>
         </div>
       </div>
 
@@ -43,8 +37,8 @@
 
         <!-- Tab Switcher -->
         <div class="auth-tab-switch">
-          <button class="auth-tab active" id="tab-citizen" onclick="switchLoginTab('citizen')">👤 Citizen</button>
-          <button class="auth-tab" id="tab-admin" onclick="switchLoginTab('admin')">🔒 Responder</button>
+          <button class="auth-tab active" id="tab-citizen" onclick="switchLoginTab('citizen')">Citizen</button>
+          <button class="auth-tab" id="tab-admin" onclick="switchLoginTab('admin')">Responder</button>
         </div>
 
         <!-- Citizen Login -->
@@ -60,15 +54,15 @@
             <div class="form-group">
               <label class="form-label">Password</label>
               <div class="input-icon-wrapper">
-                <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
-                <button type="button" class="input-eye-btn" id="login-eye" onclick="togglePassword('login-password','login-eye')">👁️</button>
+                <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
+                <button type="button" class="input-eye-btn" id="login-eye" onclick="togglePassword('login-password','login-eye')">&#128065;</button>
               </div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-              <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:var(--text-secondary); cursor:pointer;">
+              <label style="display:flex; align-items:center; gap:6px; font-size:0.82rem; color:var(--text-secondary); cursor:pointer;">
                 <input type="checkbox" style="width:auto; accent-color:var(--primary);"> Remember me
               </label>
-              <a href="#" style="font-size:0.85rem;">Forgot password?</a>
+              <a href="#" style="font-size:0.82rem;">Forgot password?</a>
             </div>
             <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In to Dashboard</button>
           </form>
@@ -77,10 +71,9 @@
         <!-- Admin Redirect -->
         <div id="admin-redirect" style="display:none;">
           <h2 style="margin-bottom:0.25rem; color:var(--danger)">Responder Login</h2>
-          <p style="margin-bottom:1.5rem; font-size:0.875rem">Government & rescue personnel only</p>
-          <div style="padding:1.25rem; border-radius:12px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); text-align:center; margin-bottom:1.5rem;">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">🔒</div>
-            <p style="font-size:0.875rem; margin:0;">Admin panel has a dedicated secure login interface.</p>
+          <p style="margin-bottom:1.5rem; font-size:0.875rem">Government and rescue personnel only</p>
+          <div style="padding:1.25rem; border-radius:var(--radius-md); background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.18); text-align:center; margin-bottom:1.5rem;">
+            <p style="font-size:0.875rem; margin:0; color:var(--text-secondary);">Admin panel has a dedicated secure login interface.</p>
           </div>
           <a href="admin.html" class="btn btn-danger btn-block btn-lg">Go to Command Center</a>
         </div>
@@ -95,7 +88,6 @@
 
   <script src="script.js"></script>
   <script>
-    // Redirect if already logged in
     (function(){
       try {
         const u = JSON.parse(localStorage.getItem('currentUser'));
@@ -104,19 +96,10 @@
     })();
 
     function switchLoginTab(tab) {
-      document.getElementById('tab-citizen').classList.toggle('active', tab==='citizen');
-      document.getElementById('tab-admin').classList.toggle('active', tab==='admin');
-      document.getElementById('citizen-login').style.display = tab==='citizen' ? 'block' : 'none';
-      document.getElementById('admin-redirect').style.display = tab==='admin' ? 'block' : 'none';
-    }
-
-    // Create floating particles
-    for(let i=0;i<12;i++){
-      const p = document.createElement('div');
-      p.className = 'particle';
-      const size = Math.random()*8+4;
-      p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;background:hsl(${Math.random()*60+200},80%,60%);animation-duration:${Math.random()*15+10}s;animation-delay:${Math.random()*10}s;`;
-      document.body.appendChild(p);
+      document.getElementById('tab-citizen').classList.toggle('active', tab === 'citizen');
+      document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
+      document.getElementById('citizen-login').style.display = tab === 'citizen' ? 'block' : 'none';
+      document.getElementById('admin-redirect').style.display = tab === 'admin' ? 'block' : 'none';
     }
   </script>
 </body>

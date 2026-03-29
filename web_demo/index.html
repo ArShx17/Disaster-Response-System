@@ -11,32 +11,32 @@
 <body>
   <div class="mesh-bg"></div>
   <div id="toast-container"></div>
-  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">&#9788;</button>
 
   <div class="dashboard-layout">
 
-    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <!-- Sidebar -->
     <aside class="sidebar">
       <a href="#" class="sidebar-logo">
-        <div class="sidebar-logo-icon">🌍</div>
+        <div class="sidebar-logo-icon">AI</div>
         <div class="sidebar-logo-text">
           <span class="sidebar-logo-title">AI Responder</span>
           <span class="sidebar-logo-sub">Emergency Network</span>
         </div>
       </a>
 
-      <div class="sidebar-section-label">Main Navigation</div>
+      <div class="sidebar-section-label">Navigation</div>
       <ul class="nav-list">
-        <li><button class="nav-item active" data-section="sec-home" onclick="switchSection('sec-home')"><span class="nav-icon">🏠</span><span>Home</span></button></li>
-        <li><button class="nav-item" data-section="sec-sos" onclick="switchSection('sec-sos')"><span class="nav-icon">🆘</span><span>SOS Emergency</span></button></li>
-        <li><button class="nav-item" data-section="sec-report" onclick="switchSection('sec-report')"><span class="nav-icon">📢</span><span>Report Incident</span></button></li>
-        <li><button class="nav-item" data-section="sec-alerts" onclick="switchSection('sec-alerts')"><span class="nav-icon">⚠️</span><span>Active Alerts</span></button></li>
-        <li><button class="nav-item" data-section="sec-profile" onclick="switchSection('sec-profile')"><span class="nav-icon">👤</span><span>My Profile</span></button></li>
+        <li><button class="nav-item active" data-section="sec-home" onclick="switchSection('sec-home')"><span class="nav-icon">H</span><span>Home</span></button></li>
+        <li><button class="nav-item" data-section="sec-sos" onclick="switchSection('sec-sos')"><span class="nav-icon">S</span><span>SOS Emergency</span></button></li>
+        <li><button class="nav-item" data-section="sec-report" onclick="switchSection('sec-report')"><span class="nav-icon">R</span><span>Report Incident</span></button></li>
+        <li><button class="nav-item" data-section="sec-alerts" onclick="switchSection('sec-alerts')"><span class="nav-icon">A</span><span>Active Alerts</span></button></li>
+        <li><button class="nav-item" data-section="sec-profile" onclick="switchSection('sec-profile')"><span class="nav-icon">P</span><span>My Profile</span></button></li>
       </ul>
 
-      <div class="sidebar-section-label" style="margin-top:1rem;">Quick Links</div>
+      <div class="sidebar-section-label" style="margin-top:0.75rem;">Quick Links</div>
       <ul class="nav-list">
-        <li><a href="admin.html" class="nav-item" style="text-decoration:none;"><span class="nav-icon">🔒</span><span>Admin Panel</span></a></li>
+        <li><a href="admin.html" class="nav-item" style="text-decoration:none;"><span class="nav-icon">MC</span><span>Admin Panel</span></a></li>
       </ul>
 
       <div class="sidebar-footer">
@@ -49,16 +49,16 @@
         </div>
         <div class="credit-bar-wrapper">
           <div class="credit-label">
-            <span>🛡️ Credits</span>
+            <span>Credits</span>
             <span id="credit-label-val">100</span>/100
           </div>
           <div class="credit-bar"><div class="credit-bar-fill" id="credit-bar-fill" style="width:100%"></div></div>
         </div>
-        <button class="btn btn-ghost btn-block" style="margin-top:10px; font-size:0.8rem;" onclick="logout()">← Logout</button>
+        <button class="btn btn-ghost btn-block" style="margin-top:8px; font-size:0.8rem;" onclick="logout()">Log Out</button>
       </div>
     </aside>
 
-    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <!-- Main Content -->
     <div class="main-content">
 
       <!-- Topbar -->
@@ -69,44 +69,43 @@
         </div>
         <div class="topbar-right">
           <div class="live-clock mono" id="live-clock">--:--:--</div>
-          <button class="btn btn-danger btn-sm" onclick="switchSection('sec-sos')">🆘 SOS</button>
+          <button class="btn btn-danger btn-sm" onclick="switchSection('sec-sos')">SOS</button>
         </div>
       </header>
 
       <div class="page-content">
 
-        <!-- ══════ HOME SECTION ══════ -->
+        <!-- Home Section -->
         <section id="sec-home" class="section active">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
             <div>
-              <h1>Good Evening, <span id="user-greeting-h1" style="background:linear-gradient(135deg,var(--primary-light),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">User</span> 👋</h1>
+              <h1>Good Evening, <span id="user-greeting-h1" style="background:linear-gradient(135deg,var(--primary-light),var(--violet-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">User</span></h1>
               <p style="margin-top:4px;">Stay informed. Stay safe. Responders are standing by.</p>
             </div>
-            <button class="btn btn-primary" onclick="simulateDisasterPrediction()">🧠 Simulate AI Alert</button>
+            <button class="btn btn-primary" onclick="simulateDisasterPrediction()">Simulate AI Alert</button>
           </div>
 
-          <!-- Prediction Alerts Area -->
           <div id="prediction-alerts"></div>
 
           <!-- Stats Row -->
           <div class="stats-grid">
-            <div class="glass stat-card" style="--card-color: rgba(239,68,68,0.3);">
-              <div class="stat-icon">🔥</div>
+            <div class="glass stat-card" style="--card-color: rgba(239,68,68,0.2);">
+              <div class="stat-icon">Active Disasters</div>
               <div class="stat-value" id="stat-disasters">0</div>
-              <div class="stat-label">Active Disasters Nearby</div>
-              <div class="stat-change up">↑ 2 since yesterday</div>
+              <div class="stat-label">Nearby Incidents</div>
+              <div class="stat-change up">+2 since yesterday</div>
             </div>
-            <div class="glass stat-card" style="--card-color: rgba(16,185,129,0.3);">
-              <div class="stat-icon">🚑</div>
+            <div class="glass stat-card" style="--card-color: rgba(16,185,129,0.2);">
+              <div class="stat-icon">Responders</div>
               <div class="stat-value" id="stat-responders">0</div>
-              <div class="stat-label">Responders Online</div>
-              <div class="stat-change up">↑ 12 on standby</div>
+              <div class="stat-label">Currently Online</div>
+              <div class="stat-change up">+12 on standby</div>
             </div>
-            <div class="glass stat-card" style="--card-color: rgba(245,158,11,0.3);">
-              <div class="stat-icon">📡</div>
+            <div class="glass stat-card" style="--card-color: rgba(245,158,11,0.2);">
+              <div class="stat-icon">Alerts</div>
               <div class="stat-value" id="stat-alerts">0</div>
-              <div class="stat-label">Active Alerts in Region</div>
-              <div class="stat-change down">↓ 3 resolved today</div>
+              <div class="stat-label">Active in Region</div>
+              <div class="stat-change down">-3 resolved today</div>
             </div>
           </div>
 
@@ -116,7 +115,7 @@
             <div class="glass" style="padding:1.5rem;">
               <div class="card-header">
                 <div>
-                  <div class="card-title">🗺️ Regional Threat Radar</div>
+                  <div class="card-title">Regional Threat Radar</div>
                   <div class="card-subtitle">Live AI-analyzed feed</div>
                 </div>
                 <span class="badge badge-emergency badge-dot">LIVE</span>
@@ -132,11 +131,11 @@
               </div>
             </div>
 
-            <!-- Daily Disaster News -->
+            <!-- Disaster Bulletin -->
             <div class="glass" style="padding:1.5rem;">
               <div class="card-header">
                 <div>
-                  <div class="card-title">📰 Disaster Bulletin</div>
+                  <div class="card-title">Disaster Bulletin</div>
                   <div class="card-subtitle">Today's incident summary</div>
                 </div>
               </div>
@@ -171,26 +170,26 @@
             </div>
           </div>
 
-          <!-- Quick Actions Row -->
-          <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
-            <button class="btn btn-danger" onclick="switchSection('sec-sos')">🆘 Open SOS Panel</button>
-            <button class="btn btn-primary" onclick="switchSection('sec-report')">📢 Report Incident</button>
-            <button class="btn btn-ghost" onclick="switchSection('sec-alerts')">⚠️ View AI Alerts</button>
+          <!-- Quick Actions -->
+          <div style="margin-top:1.25rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-danger" onclick="switchSection('sec-sos')">Open SOS Panel</button>
+            <button class="btn btn-primary" onclick="switchSection('sec-report')">Report Incident</button>
+            <button class="btn btn-ghost" onclick="switchSection('sec-alerts')">View AI Alerts</button>
           </div>
         </section>
 
-        <!-- ══════ SOS SECTION ══════ -->
+        <!-- SOS Section -->
         <section id="sec-sos" class="section">
-          <h1 style="margin-bottom:0.25rem;">🆘 Emergency Override</h1>
+          <h1 style="margin-bottom:0.25rem;">SOS Emergency Override</h1>
           <p style="margin-bottom:1.5rem;">Invoke only during a real, life-threatening emergency.</p>
 
-          <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+          <div style="display:flex; gap:1.25rem; flex-wrap:wrap;">
             <!-- SOS Button Card -->
             <div class="glass" style="padding:2rem; flex:1; min-width:280px;">
               <div class="card-header">
                 <div>
-                  <div class="card-title" style="color:var(--danger-light);">HELP / SOS BUTTON</div>
-                  <div class="card-subtitle">Dispatches emergency responders to your GPS location</div>
+                  <div class="card-title" style="color:var(--danger-light);">Emergency Help Button</div>
+                  <div class="card-subtitle">Dispatches responders to your GPS location</div>
                 </div>
               </div>
 
@@ -204,25 +203,24 @@
                     <span class="sos-btn-sub">EMERGENCY</span>
                   </button>
                 </div>
-                <p id="sos-tip" style="font-size:0.8rem; color:var(--text-tertiary); text-align:center; max-width:260px;">
-                  Hold down to trigger · Misuse = -20 credits
+                <p id="sos-tip" style="font-size:0.78rem; color:var(--text-tertiary); text-align:center; max-width:240px;">
+                  Tap to trigger. Misuse = -20 credits.
                 </p>
               </div>
 
-              <div style="padding:1rem; background:rgba(239,68,68,0.06); border-radius:10px; border:1px solid rgba(239,68,68,0.15);">
-                <p style="font-size:0.8rem; color:var(--danger-light); margin:0;">
-                  ⚠️ <strong>Legal Warning:</strong> Misuse of the emergency SOS system is a punishable offence under the Emergency Response Act. Each false alarm deducts <strong>20 credits</strong>. Zero credits = permanent SOS disable.
+              <div style="padding:1rem; background:rgba(239,68,68,0.06); border-radius:var(--radius-md); border:1px solid rgba(239,68,68,0.15);">
+                <p style="font-size:0.78rem; color:var(--danger-light); margin:0;">
+                  <strong>Legal Warning:</strong> Misuse of the emergency SOS system is a punishable offence under the Emergency Response Act. Each false alarm deducts 20 credits. Zero credits means permanent SOS disable.
                 </p>
               </div>
             </div>
 
             <!-- Credit Meter Card -->
             <div class="glass" style="padding:2rem; min-width:240px;">
-              <div class="card-title" style="margin-bottom:1rem;">🛡️ Credit Score</div>
+              <div class="card-title" style="margin-bottom:1rem;">Credit Score</div>
 
-              <!-- SVG Radial Arc -->
               <div class="credit-arc-wrapper">
-                <svg class="credit-arc-svg" viewBox="0 0 120 70" style="width:160px; height:100px;">
+                <svg viewBox="0 0 120 70" style="width:160px; height:100px;">
                   <path class="credit-arc-track" d="M 15 65 A 50 50 0 0 1 105 65" stroke-dasharray="160" stroke-dashoffset="0"/>
                   <path class="credit-arc-fill" id="credit-arc-fill" d="M 15 65 A 50 50 0 0 1 105 65" stroke-dasharray="160" stroke-dashoffset="0"/>
                   <text x="60" y="58" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text-primary)" font-family="Inter,sans-serif" id="credit-count">100</text>
@@ -230,14 +228,14 @@
                 <div class="credit-arc-label">Available Credits</div>
               </div>
 
-              <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:8px; font-size:0.85rem;">
-                <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--glass-bg); border-radius:8px;">
+              <div style="margin-top:1.25rem; display:flex; flex-direction:column; gap:6px; font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; padding:8px 10px; background:var(--glass-bg); border-radius:7px;">
                   <span style="color:var(--text-secondary);">Starting Credits</span><strong>100</strong>
                 </div>
-                <div style="display:flex; justify-content:space-between; padding:8px 12px; background:rgba(239,68,68,0.06); border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; padding:8px 10px; background:rgba(239,68,68,0.06); border-radius:7px;">
                   <span style="color:var(--text-secondary);">False Alarm Penalty</span><strong style="color:var(--danger);">-20</strong>
                 </div>
-                <div style="display:flex; justify-content:space-between; padding:8px 12px; background:rgba(16,185,129,0.06); border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; padding:8px 10px; background:rgba(16,185,129,0.06); border-radius:7px;">
                   <span style="color:var(--text-secondary);">Real Emergency</span><strong style="color:var(--success);">+0 (safe)</strong>
                 </div>
               </div>
@@ -245,21 +243,21 @@
           </div>
         </section>
 
-        <!-- ══════ REPORT INCIDENT SECTION ══════ -->
+        <!-- Report Incident Section -->
         <section id="sec-report" class="section">
-          <h1 style="margin-bottom:0.25rem;">📢 Report an Incident</h1>
+          <h1 style="margin-bottom:0.25rem;">Report an Incident</h1>
           <p style="margin-bottom:1.5rem;">Help authorities respond faster by providing accurate information.</p>
 
-          <div class="glass" style="padding:1.5rem; max-width:640px;">
+          <div class="glass" style="padding:1.5rem; max-width:600px;">
             <form id="incident-form">
               <div class="form-group">
                 <label class="form-label">Type of Emergency</label>
                 <div class="type-chips">
-                  <button type="button" class="type-chip" data-type="Fire" onclick="selectIncidentType('Fire')">🔥 Fire</button>
-                  <button type="button" class="type-chip" data-type="Flood" onclick="selectIncidentType('Flood')">🌊 Flood</button>
-                  <button type="button" class="type-chip" data-type="Accident" onclick="selectIncidentType('Accident')">🚗 Accident</button>
-                  <button type="button" class="type-chip" data-type="Medical" onclick="selectIncidentType('Medical')">🏥 Medical</button>
-                  <button type="button" class="type-chip" data-type="Other" onclick="selectIncidentType('Other')">⚡ Other</button>
+                  <button type="button" class="type-chip" data-type="Fire" onclick="selectIncidentType('Fire')">Fire</button>
+                  <button type="button" class="type-chip" data-type="Flood" onclick="selectIncidentType('Flood')">Flood</button>
+                  <button type="button" class="type-chip" data-type="Accident" onclick="selectIncidentType('Accident')">Accident</button>
+                  <button type="button" class="type-chip" data-type="Medical" onclick="selectIncidentType('Medical')">Medical</button>
+                  <button type="button" class="type-chip" data-type="Other" onclick="selectIncidentType('Other')">Other</button>
                 </div>
               </div>
 
@@ -272,10 +270,10 @@
                 <label class="form-label">Severity Level</label>
                 <select id="incident-severity" class="form-control" required>
                   <option value="" disabled selected>Select severity…</option>
-                  <option value="Low">🟢 Low — Minor, no immediate danger</option>
-                  <option value="Medium">🟡 Medium — Needs attention soon</option>
-                  <option value="High">🟠 High — Urgent response required</option>
-                  <option value="Critical">🔴 Critical — Life-threatening situation</option>
+                  <option value="Low">Low — Minor, no immediate danger</option>
+                  <option value="Medium">Medium — Needs attention soon</option>
+                  <option value="High">High — Urgent response required</option>
+                  <option value="Critical">Critical — Life-threatening situation</option>
                 </select>
               </div>
 
@@ -284,7 +282,7 @@
                 <textarea id="incident-desc" class="form-control" placeholder="Describe what you see, how many people are affected, what resources are needed…" required></textarea>
               </div>
 
-              <div style="display:flex; gap:10px;">
+              <div style="display:flex; gap:8px;">
                 <button type="submit" class="btn btn-primary" style="flex:1;">Submit Report</button>
                 <button type="reset" class="btn btn-ghost" onclick="selectedIncidentType=''; document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('selected','danger-chip','warning-chip'));">Clear</button>
               </div>
@@ -292,18 +290,18 @@
           </div>
         </section>
 
-        <!-- ══════ ALERTS SECTION ══════ -->
+        <!-- Alerts Section -->
         <section id="sec-alerts" class="section">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
             <div>
-              <h1 style="margin-bottom:0.25rem;">⚠️ AI Threat Predictions</h1>
+              <h1 style="margin-bottom:0.25rem;">AI Threat Predictions</h1>
               <p>Real-time alerts generated by the neural threat detection model.</p>
             </div>
-            <button class="btn btn-danger" onclick="simulateDisasterPrediction(); switchSection('sec-alerts');">🧠 Simulate New Alert</button>
+            <button class="btn btn-danger" onclick="simulateDisasterPrediction(); switchSection('sec-alerts');">Simulate New Alert</button>
           </div>
 
           <div class="alert-banner info">
-            <span class="alert-banner-icon">🤖</span>
+            <div class="alert-banner-icon">AI</div>
             <div class="alert-banner-content">
               <div class="alert-banner-title">AI Engine Status: Active</div>
               <div class="alert-banner-body">Monitoring 14 seismic zones · 8 weather stations · 3 flood gauges</div>
@@ -314,55 +312,50 @@
 
           <div class="glass" style="padding:1.5rem;">
             <div class="card-header">
-              <div class="card-title">📅 Historical AI Predictions</div>
+              <div class="card-title">Historical AI Predictions</div>
             </div>
             <div class="table-wrapper">
               <table class="data-table">
                 <thead><tr><th>Date</th><th>Type</th><th>Severity</th><th>Accuracy</th><th>Outcome</th></tr></thead>
                 <tbody>
-                  <tr><td>Mar 12, 2026</td><td>🌊 Tsunami Warning</td><td><span class="badge badge-emergency">Critical</span></td><td>94%</td><td><span class="badge badge-resolved">Accurate</span></td></tr>
-                  <tr><td>Feb 28, 2026</td><td>🌍 Earthquake 5.2M</td><td><span class="badge badge-emergency">High</span></td><td>89%</td><td><span class="badge badge-resolved">Accurate</span></td></tr>
-                  <tr><td>Feb 10, 2026</td><td>💧 Flash Flood</td><td><span class="badge badge-pending">Medium</span></td><td>97%</td><td><span class="badge badge-resolved">Accurate</span></td></tr>
-                  <tr><td>Jan 30, 2026</td><td>🔥 Wildfire Risk</td><td><span class="badge badge-pending">High</span></td><td>81%</td><td><span class="badge badge-info">Partial</span></td></tr>
+                  <tr><td>Mar 12, 2026</td><td>Tsunami Warning</td><td><span class="badge badge-emergency">Critical</span></td><td>94%</td><td><span class="badge badge-resolved">Accurate</span></td></tr>
+                  <tr><td>Feb 28, 2026</td><td>Earthquake 5.2M</td><td><span class="badge badge-emergency">High</span></td><td>89%</td><td><span class="badge badge-resolved">Accurate</span></td></tr>
+                  <tr><td>Feb 10, 2026</td><td>Flash Flood</td><td><span class="badge badge-pending">Medium</span></td><td>97%</td><td><span class="badge badge-resolved">Accurate</span></td></tr>
+                  <tr><td>Jan 30, 2026</td><td>Wildfire Risk</td><td><span class="badge badge-pending">High</span></td><td>81%</td><td><span class="badge badge-info">Partial</span></td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ══════ PROFILE SECTION ══════ -->
+        <!-- Profile Section -->
         <section id="sec-profile" class="section">
-          <h1 style="margin-bottom:1.5rem;">👤 My Profile</h1>
+          <h1 style="margin-bottom:1.5rem;">My Profile</h1>
 
-          <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+          <div style="display:flex; gap:1.25rem; flex-wrap:wrap;">
             <!-- Profile Card -->
             <div class="glass" style="padding:2rem; flex:1; min-width:260px;">
               <div style="text-align:center; margin-bottom:1.5rem;">
-                <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--violet)); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; margin:0 auto 1rem; font-weight:800; box-shadow:0 8px 30px var(--primary-glow);" id="profile-avatar">U</div>
+                <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--violet));display:flex;align-items:center;justify-content:center;font-size:1.75rem;color:white;margin:0 auto 1rem;font-weight:800;box-shadow:0 4px 20px var(--primary-glow);" id="profile-avatar">U</div>
                 <h2 id="profile-name">Loading…</h2>
-                <span class="badge badge-resolved" style="margin-top:4px;">✓ Verified Citizen</span>
+                <span class="badge badge-resolved" style="margin-top:4px;">Verified Citizen</span>
               </div>
 
-              <div style="display:flex; flex-direction:column; gap:12px; font-size:0.875rem;">
-                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:12px; border-radius:10px;">
-                  <span>📧</span>
-                  <div><div style="color:var(--text-tertiary); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Email</div><div id="profile-email">—</div></div>
+              <div style="display:flex; flex-direction:column; gap:10px; font-size:0.875rem;">
+                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:11px; border-radius:9px;">
+                  <div><div style="color:var(--text-tertiary); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Email</div><div id="profile-email">—</div></div>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:12px; border-radius:10px;">
-                  <span>📱</span>
-                  <div><div style="color:var(--text-tertiary); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Phone</div><div id="profile-phone">—</div></div>
+                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:11px; border-radius:9px;">
+                  <div><div style="color:var(--text-tertiary); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Phone</div><div id="profile-phone">—</div></div>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:12px; border-radius:10px;">
-                  <span>🏠</span>
-                  <div><div style="color:var(--text-tertiary); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Address</div><div id="profile-address">—</div></div>
+                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:11px; border-radius:9px;">
+                  <div><div style="color:var(--text-tertiary); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Address</div><div id="profile-address">—</div></div>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:10px; background:rgba(239,68,68,0.08); padding:12px; border-radius:10px; border:1px solid rgba(239,68,68,0.15);">
-                  <span>🚨</span>
-                  <div><div style="color:var(--danger); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Emergency Contact</div><div id="profile-emcon">—</div></div>
+                <div style="display:flex; align-items:flex-start; gap:10px; background:rgba(239,68,68,0.07); padding:11px; border-radius:9px; border:1px solid rgba(239,68,68,0.14);">
+                  <div><div style="color:var(--danger); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Emergency Contact</div><div id="profile-emcon">—</div></div>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:12px; border-radius:10px;">
-                  <span>📅</span>
-                  <div><div style="color:var(--text-tertiary); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Joined</div><div id="profile-joined">—</div></div>
+                <div style="display:flex; align-items:flex-start; gap:10px; background:var(--glass-bg); padding:11px; border-radius:9px;">
+                  <div><div style="color:var(--text-tertiary); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px;">Joined</div><div id="profile-joined">—</div></div>
                 </div>
               </div>
             </div>
@@ -370,19 +363,19 @@
             <!-- Credit & Activity -->
             <div style="flex:1; min-width:260px; display:flex; flex-direction:column; gap:1rem;">
               <div class="glass" style="padding:1.5rem;">
-                <div class="card-title" style="margin-bottom:1rem;">🛡️ Credit Status</div>
+                <div class="card-title" style="margin-bottom:1rem;">Credit Status</div>
                 <div style="display:flex; align-items:center; gap:1rem;">
-                  <div style="font-size:3rem; font-weight:900; color:var(--success); letter-spacing:-0.05em;" id="profile-credits">100</div>
+                  <div style="font-size:2.75rem; font-weight:900; color:var(--success); letter-spacing:-0.04em;" id="profile-credits">100</div>
                   <div>
-                    <div style="font-size:0.85rem; color:var(--text-secondary);">out of 100 credits</div>
-                    <div style="font-size:0.75rem; color:var(--text-tertiary); margin-top:4px;">No false alarms recorded</div>
+                    <div style="font-size:0.82rem; color:var(--text-secondary);">out of 100 credits</div>
+                    <div style="font-size:0.72rem; color:var(--text-tertiary); margin-top:3px;">No false alarms recorded</div>
                   </div>
                 </div>
               </div>
 
               <div class="glass" style="padding:1.5rem;">
-                <div class="card-title" style="margin-bottom:1rem;">📊 Your Activity</div>
-                <div style="display:flex; flex-direction:column; gap:8px; font-size:0.875rem;">
+                <div class="card-title" style="margin-bottom:1rem;">Your Activity</div>
+                <div style="display:flex; flex-direction:column; gap:7px; font-size:0.875rem;">
                   <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--glass-border);">
                     <span style="color:var(--text-secondary);">SOS Requests Sent</span>
                     <strong id="activity-sos">0</strong>
@@ -398,34 +391,29 @@
                 </div>
               </div>
 
-              <button class="btn btn-outline-danger" onclick="logout()" style="align-self:flex-start;">← Sign Out</button>
+              <button class="btn btn-outline-danger" onclick="logout()" style="align-self:flex-start;">Sign Out</button>
             </div>
           </div>
         </section>
 
       </div>
-    </div><!-- end main-content -->
-  </div><!-- end dashboard-layout -->
+    </div>
+  </div>
 
   <script src="script.js"></script>
   <script>
-    // Extend initDashboard for extra profile fields
     const _origInit = initDashboard;
     initDashboard = function() {
       _origInit();
-      // Heading greeting
       const hEl = document.getElementById('user-greeting-h1');
       if (hEl && currentUser) hEl.textContent = currentUser.name.split(' ')[0];
 
-      // Profile avatar initial
       const av = document.getElementById('profile-avatar');
-      if (av && currentUser) { av.textContent = currentUser.name.charAt(0).toUpperCase(); }
+      if (av && currentUser) av.textContent = currentUser.name.charAt(0).toUpperCase();
 
-      // Profile credits
       const pc = document.getElementById('profile-credits');
       if (pc && currentUser) pc.textContent = currentUser.credits;
 
-      // Activity counts
       const em  = JSON.parse(localStorage.getItem('emergencies')) || [];
       const inc = JSON.parse(localStorage.getItem('incidents'))   || [];
       const myEm  = em.filter(e  => e.userId === currentUser.id);
@@ -435,7 +423,6 @@
       if (a1) a1.textContent = myEm.length;
       if (a2) a2.textContent = myInc.length;
 
-      // Sync prediction alerts to both home and alerts page
       const mirror = document.getElementById('prediction-alerts-page');
       const main   = document.getElementById('prediction-alerts');
       if (mirror && main) {
