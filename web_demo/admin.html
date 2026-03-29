@@ -170,15 +170,18 @@
         <!-- Incident Reports -->
         <section id="admin-incidents" class="section">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
-            <h2>Citizen Incident Reports</h2>
+            <div>
+              <h2>Citizen Incident Reports</h2>
+              <p style="font-size:0.8rem; margin-top:2px;">Review, dispatch helpers, or decline fake reports.</p>
+            </div>
             <button class="btn btn-primary btn-sm" onclick="loadIncidentsTable()">Refresh</button>
           </div>
           <div class="glass" style="padding:1.5rem;">
             <div class="table-wrapper">
               <table class="data-table">
-                <thead><tr><th>Type</th><th>Location</th><th>Reporter</th><th>Description</th><th>Severity</th></tr></thead>
+                <thead><tr><th>Type</th><th>Location</th><th>Reporter</th><th>Description</th><th>Severity</th><th>Verification</th><th>Actions</th></tr></thead>
                 <tbody id="incidents-body">
-                  <tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-tertiary);">Loading…</td></tr>
+                  <tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-tertiary);">Loading…</td></tr>
                 </tbody>
               </table>
             </div>
@@ -206,6 +209,109 @@
         </section>
 
       </div>
+    </div>
+  </div>
+
+  <!-- DISPATCH HELPERS MODAL -->
+  <div id="dispatch-modal" class="modal-overlay" onclick="if(event.target===this)closeDispatchModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Dispatch Helpers</h3>
+        <button class="modal-close" onclick="closeDispatchModal()">x</button>
+      </div>
+
+      <div style="margin-bottom:1rem; padding:12px; background:var(--glass-bg); border-radius:var(--radius-md); border:1px solid var(--glass-border);">
+        <div style="font-size:0.72rem; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Incident</div>
+        <div id="dispatch-incident-summary" style="font-size:0.875rem; font-weight:600;">&#8212;</div>
+        <div id="dispatch-incident-location" style="font-size:0.78rem; color:var(--text-secondary); margin-top:2px;">&#8212;</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Helper Type</label>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button type="button" class="type-chip dispatch-helper-chip selected" data-helper="Fire Brigade" onclick="selectHelper(this)">Fire Brigade</button>
+          <button type="button" class="type-chip dispatch-helper-chip" data-helper="Medical Team" onclick="selectHelper(this)">Medical Team</button>
+          <button type="button" class="type-chip dispatch-helper-chip" data-helper="Flood Rescue" onclick="selectHelper(this)">Flood Rescue</button>
+          <button type="button" class="type-chip dispatch-helper-chip" data-helper="Police" onclick="selectHelper(this)">Police</button>
+          <button type="button" class="type-chip dispatch-helper-chip" data-helper="NDRF Team" onclick="selectHelper(this)">NDRF Team</button>
+          <button type="button" class="type-chip dispatch-helper-chip" data-helper="Ambulance" onclick="selectHelper(this)">Ambulance</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Message to Helpers</label>
+        <textarea id="dispatch-message" class="form-control" rows="3" placeholder="Describe the situation, urgency, and any special requirements&#8230;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Priority Level</label>
+        <select id="dispatch-priority" class="form-control">
+          <option value="High">High &#8212; Immediate response required</option>
+          <option value="Medium" selected>Medium &#8212; Respond within 15 mins</option>
+          <option value="Low">Low &#8212; Standard response</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="confirmDispatch()">Send Dispatch</button>
+        <button class="btn btn-ghost" onclick="closeDispatchModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECLINE / FAKE REPORT MODAL -->
+  <div id="decline-modal" class="modal-overlay" onclick="if(event.target===this)closeDeclineModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="color:var(--danger-light);">Decline Report</h3>
+        <button class="modal-close" onclick="closeDeclineModal()">x</button>
+      </div>
+
+      <div style="padding:14px; background:rgba(239,68,68,0.07); border-radius:var(--radius-md); border:1px solid rgba(239,68,68,0.2); margin-bottom:1.25rem;">
+        <div style="font-size:0.875rem; font-weight:600; color:var(--danger-light); margin-bottom:4px;">Report Verification Failed</div>
+        <div id="decline-incident-summary" style="font-size:0.82rem; color:var(--text-secondary);">&#8212;</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reason for Decline</label>
+        <select id="decline-reason" class="form-control">
+          <option value="False alarm — no incident found at location">False alarm &#8212; no incident found at location</option>
+          <option value="Duplicate report already being handled">Duplicate report already being handled</option>
+          <option value="Insufficient information provided">Insufficient information provided</option>
+          <option value="Misuse of reporting system">Misuse of reporting system</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Additional Notes (optional)</label>
+        <textarea id="decline-notes" class="form-control" rows="2" placeholder="Any additional details for the record&#8230;"></textarea>
+      </div>
+
+      <div style="padding:12px; background:rgba(239,68,68,0.06); border-radius:var(--radius-md); margin-bottom:1.25rem; font-size:0.82rem; color:var(--danger-light);">
+        <strong>Warning:</strong> Declining this report as fake will deduct <strong>20 credits</strong> from the reporter.
+        Zero credits means permanent SOS disable.
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-danger" style="flex:1;" onclick="confirmDecline()">Confirm Decline (-20 Credits)</button>
+        <button class="btn btn-ghost" onclick="closeDeclineModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO VIEWER MODAL -->
+  <div id="photo-modal" class="modal-overlay" onclick="if(event.target===this)closePhotoModal()">
+    <div class="modal-card" style="max-width:580px;">
+      <div class="modal-header">
+        <div>
+          <h3>Verification Photo</h3>
+          <div id="photo-modal-meta" style="font-size:0.75rem; color:var(--text-tertiary); margin-top:2px;"></div>
+        </div>
+        <button class="modal-close" onclick="closePhotoModal()">x</button>
+      </div>
+      <img id="photo-modal-img" src="" alt="Incident photo" style="width:100%; border-radius:var(--radius-md); border:1px solid var(--glass-border); max-height:420px; object-fit:contain; background:var(--bg-base);">
+      <div id="photo-modal-reporter" style="margin-top:12px; font-size:0.82rem; color:var(--text-secondary);"></div>
     </div>
   </div>
 
@@ -260,6 +366,162 @@
         </tr>`).join('');
     };
 
+    // ─── Enhanced loadIncidentsTable with Dispatch + Decline + View Photo ───
+    const _origIncLoad = loadIncidentsTable;
+    loadIncidentsTable = function() {
+      const tbody = document.getElementById('incidents-body');
+      if (!tbody) return;
+      const data = JSON.parse(localStorage.getItem('incidents')) || [];
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-tertiary);">No incident reports submitted yet.</td></tr>`;
+        return;
+      }
+      const sevBadge = { 'Low':'badge-resolved','Medium':'badge-pending','High':'badge-emergency','Critical':'badge-emergency badge-dot' };
+      const statusBadge = { 'Pending':'badge-pending','Dispatched':'badge-info','Declined':'badge-emergency','Verified':'badge-resolved' };
+      tbody.innerHTML = data.map((inc, idx) => `
+        <tr>
+          <td><strong>${inc.type || 'Unknown'}</strong></td>
+          <td style="font-size:0.82rem; max-width:160px; white-space:normal;">${inc.location || '&#8212;'}</td>
+          <td>
+            <div style="font-weight:600; font-size:0.82rem;">${inc.userName || inc.reportedBy || '&#8212;'}</div>
+            <div style="font-size:0.7rem; color:var(--text-tertiary);">${inc.time || ''}</div>
+          </td>
+          <td style="max-width:200px; font-size:0.82rem; white-space:normal; color:var(--text-secondary);">${(inc.description || '').substring(0,100)}${(inc.description||'').length>100?'&#8230;':''}</td>
+          <td><span class="badge ${sevBadge[inc.severity] || 'badge-info'}">${inc.severity || '&#8212;'}</span></td>
+          <td><span class="badge ${statusBadge[inc.verificationStatus] || 'badge-pending'}">${inc.verificationStatus || 'Pending'}</span></td>
+          <td style="min-width:130px;">
+            ${inc.photo
+              ? `<div style="margin-bottom:6px;">
+                   <img src="${inc.photo}" alt="Incident photo"
+                     style="width:90px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);cursor:pointer;"
+                     onclick="openPhotoModal(${idx})" title="Click to view full photo">
+                   <div style="font-size:0.68rem;color:var(--primary);cursor:pointer;margin-top:3px;text-align:center;" onclick="openPhotoModal(${idx})">View Full</div>
+                 </div>`
+              : `<span style="font-size:0.72rem;color:var(--text-tertiary);">No photo</span><br>`
+            }
+            ${inc.verificationStatus === 'Declined' ? `<span style="color:var(--text-tertiary);font-size:0.78rem;">Declined</span>` :
+              inc.verificationStatus === 'Dispatched' ? `<span style="color:var(--primary);font-size:0.78rem;">Helpers Sent</span>` : `
+              <button class="btn btn-primary btn-sm" style="margin-right:4px;margin-top:4px;" onclick="openDispatchModal(${idx})">Dispatch</button>
+              <button class="btn btn-danger btn-sm" style="margin-top:4px;" onclick="openDeclineModal(${idx})">Decline</button>
+            `}
+          </td>
+        </tr>`).join('');
+    };
+
+    // ─── Photo Modal Logic ───
+    function openPhotoModal(idx) {
+      const data = JSON.parse(localStorage.getItem('incidents')) || [];
+      const inc  = data[idx];
+      if (!inc || !inc.photo) return;
+      document.getElementById('photo-modal-img').src = inc.photo;
+      document.getElementById('photo-modal-meta').textContent = inc.photoName || 'Verification photo';
+      document.getElementById('photo-modal-reporter').textContent =
+        `Reported by: ${inc.userName || inc.reportedBy || 'Unknown'}  ·  ${inc.type} incident  ·  ${inc.time}`;
+      document.getElementById('photo-modal').classList.add('open');
+    }
+    function closePhotoModal() {
+      document.getElementById('photo-modal').classList.remove('open');
+      document.getElementById('photo-modal-img').src = '';
+    }
+
+    // ─── Dispatch Modal Logic ───
+    let _activeIncidentIdx = null;
+    let _selectedHelper = 'Fire Brigade';
+
+    function openDispatchModal(idx) {
+      _activeIncidentIdx = idx;
+      const data = JSON.parse(localStorage.getItem('incidents')) || [];
+      const inc  = data[idx];
+      if (!inc) return;
+      document.getElementById('dispatch-incident-summary').textContent = `${inc.type} — ${inc.severity} severity`;
+      document.getElementById('dispatch-incident-location').textContent = inc.location || '—';
+      // Auto-suggest helper based on type
+      const autoMap = { 'Fire':'Fire Brigade','Flood':'Flood Rescue','Medical':'Medical Team','Accident':'Ambulance' };
+      const suggested = autoMap[inc.type] || 'NDRF Team';
+      document.querySelectorAll('.dispatch-helper-chip').forEach(c => {
+        c.classList.toggle('selected', c.dataset.helper === suggested);
+      });
+      _selectedHelper = suggested;
+      // Auto-fill message
+      document.getElementById('dispatch-message').value =
+        `Urgent: ${inc.type} incident reported at ${inc.location}. Severity: ${inc.severity}. Please respond immediately.`;
+      document.getElementById('dispatch-modal').classList.add('open');
+    }
+    function closeDispatchModal() {
+      document.getElementById('dispatch-modal').classList.remove('open');
+      _activeIncidentIdx = null;
+    }
+    function selectHelper(btn) {
+      document.querySelectorAll('.dispatch-helper-chip').forEach(c => c.classList.remove('selected'));
+      btn.classList.add('selected');
+      _selectedHelper = btn.dataset.helper;
+    }
+    function confirmDispatch() {
+      if (_activeIncidentIdx === null) return;
+      const msg      = document.getElementById('dispatch-message').value.trim();
+      const priority = document.getElementById('dispatch-priority').value;
+      if (!msg) { showToast('Please enter a message for helpers.', 'warning'); return; }
+      const data = JSON.parse(localStorage.getItem('incidents')) || [];
+      data[_activeIncidentIdx].verificationStatus = 'Dispatched';
+      data[_activeIncidentIdx].dispatchedTo = _selectedHelper;
+      data[_activeIncidentIdx].dispatchMessage = msg;
+      data[_activeIncidentIdx].dispatchPriority = priority;
+      data[_activeIncidentIdx].dispatchTime = new Date().toLocaleString('en-IN', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      localStorage.setItem('incidents', JSON.stringify(data));
+      closeDispatchModal();
+      loadIncidentsTable();
+      showToast(`${_selectedHelper} dispatched successfully.`, 'success');
+    }
+
+    // ─── Decline / Fake Modal Logic ───
+    let _declineIdx = null;
+    function openDeclineModal(idx) {
+      _declineIdx = idx;
+      const data = JSON.parse(localStorage.getItem('incidents')) || [];
+      const inc  = data[idx];
+      if (!inc) return;
+      document.getElementById('decline-incident-summary').textContent =
+        `${inc.type} at ${inc.location} — reported by ${inc.userName}`;
+      document.getElementById('decline-modal').classList.add('open');
+    }
+    function closeDeclineModal() {
+      document.getElementById('decline-modal').classList.remove('open');
+      _declineIdx = null;
+    }
+    function confirmDecline() {
+      if (_declineIdx === null) return;
+      const incidentData = JSON.parse(localStorage.getItem('incidents')) || [];
+      const inc = incidentData[_declineIdx];
+      const reason   = document.getElementById('decline-reason').value;
+      const notes    = document.getElementById('decline-notes').value.trim();
+      // Mark incident as declined
+      incidentData[_declineIdx].verificationStatus = 'Declined';
+      incidentData[_declineIdx].declineReason = reason;
+      incidentData[_declineIdx].declineNotes  = notes;
+      localStorage.setItem('incidents', JSON.stringify(incidentData));
+      // Deduct 20 credits from the reporter
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const userIdx = users.findIndex(u => u.id === inc.userId);
+      if (userIdx !== -1) {
+        users[userIdx].credits = Math.max(0, (users[userIdx].credits || 100) - 20);
+        localStorage.setItem('users', JSON.stringify(users));
+        // If logged-in user is the same, update currentUser too
+        try {
+          const cu = JSON.parse(localStorage.getItem('currentUser'));
+          if (cu && cu.id === inc.userId) {
+            cu.credits = users[userIdx].credits;
+            localStorage.setItem('currentUser', JSON.stringify(cu));
+          }
+        } catch(e){}
+        showToast(`Report declined. 20 credits deducted from ${inc.userName}.`, 'danger');
+      } else {
+        showToast(`Report declined.`, 'warning');
+      }
+      closeDeclineModal();
+      loadIncidentsTable();
+      loadAdminStats();
+    }
+
     const _origStats = loadAdminStats;
     loadAdminStats = function() {
       _origStats();
@@ -280,7 +542,7 @@
             <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--violet));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;flex-shrink:0;font-size:0.875rem;">${u.name.charAt(0)}</div>
             <div style="min-width:0;">
               <div style="font-weight:600; font-size:0.875rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${u.name}</div>
-              <div style="font-size:0.72rem; color:var(--text-tertiary);">${u.email} · ${u.credits} credits</div>
+              <div style="font-size:0.72rem; color:var(--text-tertiary);">${u.email} · <span style="color:${(u.credits||100)<40?'var(--danger)':'var(--success)'}; font-weight:700;">${u.credits !== undefined ? u.credits : 100} credits</span></div>
             </div>
           </div>`).join('');
       }
@@ -290,6 +552,7 @@
     switchAdminSection = function(id) {
       origSwitch(id);
       if (id === 'admin-stats') loadAdminStats();
+      if (id === 'admin-incidents') loadIncidentsTable();
     };
   </script>
 </body>

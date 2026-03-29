@@ -380,7 +380,8 @@ function dispatchSOS(lat, lng) {
 // INCIDENT REPORT
 // ════════════════════════════════════════════════════════════
 
-let selectedIncidentType = '';
+var selectedIncidentType = '';
+var _incidentPhotoData  = { src: null, name: null }; // global: accessible across all script tags
 
 function selectIncidentType(type) {
   selectedIncidentType = type;
@@ -407,16 +408,27 @@ function handleIncidentReport(e) {
     type: selectedIncidentType,
     location, description: desc, severity,
     reportedBy: currentUser.name,
+    userName: currentUser.name,
     userId: currentUser.id,
     time: new Date().toLocaleString(),
-    status: 'reported'
+    status: 'reported',
+    photo:     _incidentPhotoData.src  || null,
+    photoName: _incidentPhotoData.name || null
   });
   localStorage.setItem('incidents', JSON.stringify(incidents));
 
-  showToast(`📋 ${selectedIncidentType} incident reported. Authorities alerted.`, 'success');
+  // Reset everything
+  showToast(`${selectedIncidentType} incident reported. Authorities alerted.`, 'success');
   e.target.reset();
   selectedIncidentType = '';
+  _incidentPhotoData = { src: null, name: null };
   document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected','danger-chip','warning-chip'));
+  const resetPreview    = document.getElementById('image-preview');
+  const resetPreviewBox = document.getElementById('image-preview-box');
+  const resetUploadZone = document.getElementById('upload-zone');
+  if (resetPreview)    resetPreview.src = '';
+  if (resetPreviewBox) resetPreviewBox.style.display = 'none';
+  if (resetUploadZone) resetUploadZone.style.display = 'block';
   switchSection('sec-home');
 }
 
@@ -638,23 +650,56 @@ function loadIncidentsTable() {
   loadAdminStats();
 
   if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-tertiary);">No incident reports logged.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-tertiary);">No incident reports logged.</td></tr>`;
     return;
   }
 
-  const typeColors = { Fire: 'danger', Flood: 'pending', Accident: 'emergency', Medical: 'info', Other: 'info' };
-  tbody.innerHTML = data.map(req => `
+  const sevBadge    = { 'Low':'badge-resolved','Medium':'badge-pending','High':'badge-emergency','Critical':'badge-emergency badge-dot' };
+  const statusBadge = { 'Pending':'badge-pending','Dispatched':'badge-info','Declined':'badge-emergency','Verified':'badge-resolved' };
+
+  tbody.innerHTML = data.map((req, idx) => `
     <tr>
-      <td><span class="badge badge-${typeColors[req.type] || 'info'}">${req.type}</span></td>
-      <td>${req.location}</td>
+      <td><strong>${req.type || 'Unknown'}</strong></td>
+      <td style="font-size:0.82rem;">${req.location || '&mdash;'}</td>
       <td>
-        <div style="font-weight:600">${req.reportedBy}</div>
-        <div style="font-size:0.75rem; color:var(--text-tertiary)">${req.time}</div>
+        <div style="font-weight:600; font-size:0.82rem;">${req.userName || req.reportedBy || '&mdash;'}</div>
+        <div style="font-size:0.7rem; color:var(--text-tertiary);">${req.time || ''}</div>
       </td>
-      <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary);" title="${req.description}">${req.description}</td>
-      <td><span class="badge badge-pending">${req.severity || 'N/A'}</span></td>
+      <td style="max-width:180px; font-size:0.82rem; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${req.description || ''}">${req.description || ''}</td>
+      <td><span class="badge ${sevBadge[req.severity] || 'badge-info'}">${req.severity || '&mdash;'}</span></td>
+      <td><span class="badge ${statusBadge[req.verificationStatus] || 'badge-pending'}">${req.verificationStatus || 'Pending'}</span></td>
+      <td style="white-space:nowrap; min-width:120px;">
+        ${req.photo
+          ? `<button class="btn btn-ghost btn-sm" style="display:block;width:100%;margin-bottom:4px;" onclick="adminViewPhoto(${idx})">View Photo</button>`
+          : `<span style="font-size:0.72rem;color:var(--text-tertiary);display:block;margin-bottom:4px;">No photo</span>`
+        }
+        ${req.verificationStatus === 'Declined'
+          ? `<span style="color:var(--text-tertiary);font-size:0.78rem;">Declined</span>`
+          : req.verificationStatus === 'Dispatched'
+          ? `<span style="color:var(--primary);font-size:0.78rem;">Helpers Sent</span>`
+          : `<button class="btn btn-primary btn-sm" style="margin-right:3px;" onclick="openDispatchModal(${idx})">Dispatch</button><button class="btn btn-danger btn-sm" onclick="openDeclineModal(${idx})">Decline</button>`
+        }
+      </td>
     </tr>`).join('');
 }
+
+function adminViewPhoto(idx) {
+  const data = JSON.parse(localStorage.getItem('incidents')) || [];
+  const inc  = data[idx];
+  if (!inc || !inc.photo) return;
+  const modal = document.getElementById('photo-modal');
+  if (!modal) {
+    const win = window.open('', '_blank');
+    win.document.write(`<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;"><img src="${inc.photo}" style="max-width:100%;max-height:100vh;"><p style="color:#aaa;text-align:center;font-family:sans-serif;">${inc.photoName || ''}</p></body></html>`);
+    return;
+  }
+  document.getElementById('photo-modal-img').src = inc.photo;
+  document.getElementById('photo-modal-meta').textContent = inc.photoName || 'Verification photo';
+  document.getElementById('photo-modal-reporter').textContent =
+    `Reported by: ${inc.userName || inc.reportedBy || 'Unknown'}  \xb7  ${inc.type}  \xb7  ${inc.time}`;
+  modal.classList.add('open');
+}
+
 
 // ════════════════════════════════════════════════════════════
 // ADMIN REGISTRATION

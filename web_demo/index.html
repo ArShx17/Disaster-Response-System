@@ -248,8 +248,30 @@
           <h1 style="margin-bottom:0.25rem;">Report an Incident</h1>
           <p style="margin-bottom:1.5rem;">Help authorities respond faster by providing accurate information.</p>
 
-          <div class="glass" style="padding:1.5rem; max-width:600px;">
+          <div class="glass" style="padding:1.5rem; max-width:640px;">
             <form id="incident-form">
+
+              <!-- Auto-filled system fields -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1.1rem;">
+                <div>
+                  <div class="form-label">Reported At</div>
+                  <div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:rgba(16,185,129,0.07); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md);">
+                    <span id="report-timestamp" style="font-size:0.85rem; font-family:var(--font-mono); color:var(--primary-light);">—</span>
+                  </div>
+                  <div class="form-hint">Auto-filled by system</div>
+                </div>
+                <div>
+                  <div class="form-label" style="display:flex; align-items:center; justify-content:space-between;">
+                    <span>GPS Coordinates</span>
+                    <button type="button" onclick="detectLocation()" style="background:none; border:none; color:var(--primary); font-size:0.72rem; font-weight:600; cursor:pointer; font-family:var(--font); padding:0;">Detect Again</button>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:rgba(16,185,129,0.07); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius-md);">
+                    <span id="report-gps" style="font-size:0.82rem; font-family:var(--font-mono); color:var(--primary-light);">Detecting…</span>
+                  </div>
+                  <div class="form-hint" id="report-gps-address" style="color:var(--text-tertiary);">Fetching address…</div>
+                </div>
+              </div>
+
               <div class="form-group">
                 <label class="form-label">Type of Emergency</label>
                 <div class="type-chips">
@@ -282,9 +304,25 @@
                 <textarea id="incident-desc" class="form-control" placeholder="Describe what you see, how many people are affected, what resources are needed…" required></textarea>
               </div>
 
+              <!-- Image Upload -->
+              <div class="form-group">
+                <label class="form-label">Verification Photo <span style="color:var(--text-tertiary); font-weight:400; text-transform:none; letter-spacing:0;">(optional but recommended)</span></label>
+                <div id="upload-zone" onclick="document.getElementById('incident-image').click()" style="border:2px dashed var(--glass-border); border-radius:var(--radius-md); padding:1.5rem; text-align:center; cursor:pointer; transition:var(--transition); background:var(--glass-bg);" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--glass-border)'">
+                  <div style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:4px;">Click to upload a photo of the incident</div>
+                  <div style="font-size:0.72rem; color:var(--text-tertiary);">JPG, PNG, WEBP — Max 5MB</div>
+                  <input type="file" id="incident-image" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                </div>
+                <!-- Preview -->
+                <div id="image-preview-box" style="display:none; margin-top:10px; position:relative;">
+                  <img id="image-preview" src="" alt="Preview" style="width:100%; max-height:200px; object-fit:cover; border-radius:var(--radius-md); border:1px solid var(--glass-border);">
+                  <button type="button" onclick="removeImage()" style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); border:none; color:white; border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center;">x</button>
+                  <div id="image-name" style="font-size:0.72rem; color:var(--text-tertiary); margin-top:5px;"></div>
+                </div>
+              </div>
+
               <div style="display:flex; gap:8px;">
                 <button type="submit" class="btn btn-primary" style="flex:1;">Submit Report</button>
-                <button type="reset" class="btn btn-ghost" onclick="selectedIncidentType=''; document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('selected','danger-chip','warning-chip'));">Clear</button>
+                <button type="reset" class="btn btn-ghost" onclick="resetReportForm()">Clear</button>
               </div>
             </form>
           </div>
@@ -431,6 +469,98 @@
       }
     };
     initDashboard();
+
+    // ── Real-time timestamp ──
+    function updateReportTimestamp() {
+      const el = document.getElementById('report-timestamp');
+      if (!el) return;
+      const now = new Date();
+      el.textContent = now.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    }
+    updateReportTimestamp();
+    setInterval(updateReportTimestamp, 1000);
+
+    // ── GPS Location detection ──
+    let incidentLatLng = null;
+    function detectLocation() {
+      const gpsEl  = document.getElementById('report-gps');
+      const addrEl = document.getElementById('report-gps-address');
+      if (!gpsEl) return;
+      gpsEl.textContent = 'Detecting…';
+      addrEl.textContent = 'Fetching address…';
+      if (!navigator.geolocation) {
+        gpsEl.textContent = 'Not supported';
+        addrEl.textContent = 'Your browser does not support GPS.';
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude.toFixed(5);
+          const lng = pos.coords.longitude.toFixed(5);
+          incidentLatLng = { lat, lng };
+          gpsEl.textContent = `${lat}, ${lng}`;
+          // Reverse geocode using browser-native fetch (no key needed via OpenStreetMap)
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            .then(r => r.json())
+            .then(data => {
+              const addr = data.display_name || 'Address unavailable';
+              addrEl.textContent = addr.length > 80 ? addr.substring(0,80) + '…' : addr;
+              // Auto-fill the location field if empty
+              const locInput = document.getElementById('incident-location');
+              if (locInput && !locInput.value) locInput.value = addr.split(',').slice(0,3).join(', ');
+            })
+            .catch(() => { addrEl.textContent = `Lat: ${lat}, Lng: ${lng}`; });
+        },
+        err => {
+          gpsEl.textContent  = 'Access denied';
+          addrEl.textContent = 'Please allow location access in your browser.';
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+    // Auto-detect on page load when Report section becomes visible
+    const _origSwitch = switchSection;
+    switchSection = function(id) {
+      _origSwitch(id);
+      if (id === 'sec-report') detectLocation();
+    };
+    // Also detect on first view if already on report section
+    if (document.getElementById('sec-report')?.classList.contains('active')) detectLocation();
+
+    // ── Image upload handler ──
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Image must be under 5MB.', 'danger');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const dataUrl = ev.target.result;
+        // Store in global variable — read at form submit time
+        _incidentPhotoData = { src: dataUrl, name: `${file.name} (${(file.size/1024).toFixed(1)} KB)` };
+        // Update preview UI
+        document.getElementById('image-preview').src = dataUrl;
+        document.getElementById('image-name').textContent = _incidentPhotoData.name;
+        document.getElementById('image-preview-box').style.display = 'block';
+        document.getElementById('upload-zone').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeImage() {
+      _incidentPhotoData = { src: null, name: null };
+      document.getElementById('incident-image').value = '';
+      document.getElementById('image-preview').src = '';
+      document.getElementById('image-preview-box').style.display = 'none';
+      document.getElementById('upload-zone').style.display = 'block';
+    }
+    function resetReportForm() {
+      selectedIncidentType = '';
+      _incidentPhotoData = { src: null, name: null };
+      document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected','danger-chip','warning-chip'));
+      removeImage();
+    }
   </script>
 </body>
 </html>
