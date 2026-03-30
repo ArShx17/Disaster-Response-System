@@ -288,18 +288,6 @@ http://localhost:8000
 
 ---
 
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 👨‍💻 Team
-
-* Abhay Maddy & Team 🚀
-
----
-
 ## ⭐ Support
 
 If you find this project useful, give it a ⭐ on GitHub!
