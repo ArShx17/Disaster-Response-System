@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Responder Registration — AI Disaster Response</title>
   <meta name="description" content="Government clearance portal for responder registration.">
-  <link rel="stylesheet" href="styles.css">
-  <script>(function(){ const t=localStorage.getItem('theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();</script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/theme-init.js"></script>
 </head>
 <body>
   <div class="mesh-bg"></div>
@@ -29,8 +29,8 @@
         </ul>
         <div style="margin-top:1.5rem; padding:12px 16px; background:rgba(239,68,68,0.12); border-radius:10px; border:1px solid rgba(239,68,68,0.25); text-align:left;">
           <div style="font-size:0.75rem; color:var(--danger-light); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">🔑 Demo Clearance Code</div>
-          <div style="font-family:'JetBrains Mono',monospace; font-size:1.5rem; font-weight:700; color:white; letter-spacing:0.3em;">1234</div>
-          <div style="font-size:0.72rem; color:rgba(255,255,255,0.45); margin-top:4px;">In production, this is issued by the Ministry of Emergency Services</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:1.5rem; font-weight:700; color:var(--text-primary); letter-spacing:0.3em;">1234</div>
+          <div style="font-size:0.72rem; color:var(--text-tertiary); margin-top:4px;">In production, this is issued by the Ministry of Emergency Services</div>
         </div>
       </div>
 
@@ -107,9 +107,8 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
-  <script>
-    window.requireAuth = function(){};
-  </script>
+  <script src="js/script.js"></script>
+  
+  <script src="js/admin-register-inline.js"></script>
 </body>
 </html>

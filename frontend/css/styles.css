@@ -846,6 +846,40 @@ select.form-control option { background: var(--bg-elevated); color: var(--text-p
 .auth-divider::after  { right: 0; }
 .auth-footer-links { text-align: center; font-size: 0.82rem; color: var(--text-secondary); }
 
+/* Auth form side text colors — ensure visibility */
+.auth-form-side h2 { color: var(--text-primary); }
+.auth-form-side p { color: var(--text-secondary); }
+
+/* ============ LIGHT THEME — AUTH PAGE OVERRIDES ============ */
+[data-theme="light"] .auth-container {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+[data-theme="light"] .auth-brand {
+  background: linear-gradient(145deg, rgba(16,185,129,0.12) 0%, rgba(219,39,119,0.14) 100%);
+}
+[data-theme="light"] .auth-brand-label { color: var(--text-tertiary); }
+[data-theme="light"] .auth-brand h2 { color: var(--text-primary); }
+[data-theme="light"] .auth-brand p { color: var(--text-secondary); }
+[data-theme="light"] .auth-features li { color: var(--text-secondary); }
+[data-theme="light"] .auth-system-status {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+}
+[data-theme="light"] .auth-system-status-label { color: var(--text-tertiary); }
+[data-theme="light"] .auth-system-status-text { color: var(--text-primary); }
+[data-theme="light"] .auth-system-status-sub { color: var(--text-tertiary); }
+[data-theme="light"] .auth-form-side {
+  background: var(--bg-surface);
+}
+[data-theme="light"] .auth-tab.active {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+[data-theme="light"] .form-control {
+  background: var(--bg-elevated);
+  border-color: rgba(0,0,0,0.1);
+  color: var(--text-primary);
+}
+
 /* ============ WIZARD STEPS ============ */
 .wizard-steps {
   display: flex; align-items: center; gap: 0;
